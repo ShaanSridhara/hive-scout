@@ -1,0 +1,10 @@
+{
+  "name": "Hive Scout",
+  "short_name": "Hive Scout",
+  "description": "BioBuzz match scouting for FTC: live schedule, hive tips and shooting tiles.",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#FBF8F1",
+  "theme_color": "#D98E04",
+  "icons": [{ "src": "icon.svg", "sizes": "any", "type": "image/svg+xml" }]
+}

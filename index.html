@@ -1,0 +1,470 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#D98E04">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Hive Scout">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="manifest" href="manifest.json">
+<title>Hive Scout</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500;700&display=swap">
+<style>
+/* Layout: one-column phone app, sticky top bar, three views (event → matches → score) plus a team summary view */
+:root{
+  --bg:#FBF8F1; --surface:#FFFFFF; --sunk:#F2ECDD; --fg:#211C12; --muted:#6E6550; --line:#E3DAC4;
+  --honey:#D98E04; --honey-ink:#2A1C00; --honey-soft:#FCEBC4;
+  --red:#D23A2E; --red-soft:#FBE1DE; --blue:#2C62D6; --blue-soft:#DEE7FB; --ok:#2F8A4C;
+  --f-display:"Sora",ui-sans-serif,system-ui,sans-serif;
+  --f-body:"Inter",ui-sans-serif,system-ui,-apple-system,sans-serif;
+  --f-mono:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#15120C; --surface:#1F1B13; --sunk:#2A251A; --fg:#F3EDDF; --muted:#A99F88; --line:#3A3326;
+  --honey:#F2B33D; --honey-ink:#1E1400; --honey-soft:#3B2D10;
+  --red:#F06A5E; --red-soft:#3D1A17; --blue:#6E97F2; --blue-soft:#18243F; --ok:#5BC07A; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#15120C; --surface:#1F1B13; --sunk:#2A251A; --fg:#F3EDDF; --muted:#A99F88; --line:#3A3326;
+  --honey:#F2B33D; --honey-ink:#1E1400; --honey-soft:#3B2D10;
+  --red:#F06A5E; --red-soft:#3D1A17; --blue:#6E97F2; --blue-soft:#18243F; --ok:#5BC07A; color-scheme:dark}
+
+*{box-sizing:border-box}
+html{padding-top:env(safe-area-inset-top,0px)}
+body{margin:0}
+[hidden]{display:none!important}
+body{background:var(--bg);color:var(--fg);font-family:var(--f-body);font-size:15px;line-height:1.45;-webkit-tap-highlight-color:transparent}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--surface)}
+button{font:inherit;color:inherit;cursor:pointer}
+button:focus-visible,input:focus-visible{outline:3px solid var(--honey);outline-offset:2px}
+.wrap{max-width:560px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+
+header.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--surface);border-bottom:1px solid var(--line)}
+header.top .wrap{display:flex;align-items:center;gap:10px;padding-block:10px}
+.logo{width:30px;height:30px;flex:none}
+.brand{font-family:var(--f-display);font-weight:800;font-size:17px;letter-spacing:-.01em}
+.evt{margin-left:auto;min-width:0;text-align:right}
+.evt b{display:block;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.evt span{font-size:12px;color:var(--muted);font-family:var(--f-mono)}
+.linkbtn{background:none;border:0;padding:0;color:var(--honey);font-weight:600;font-size:13px;text-decoration:underline;text-underline-offset:3px}
+
+main{padding-block:16px 120px;display:flex;flex-direction:column;gap:16px}
+h1,h2{font-family:var(--f-display);margin:0;text-wrap:balance;letter-spacing:-.015em}
+h1{font-size:24px}
+h2{font-size:17px}
+.sub{color:var(--muted);margin:0}
+.lab{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:600}
+
+.field{display:flex;gap:8px}
+input[type=text],input[type=number],input[type=search]{flex:1;min-width:0;font:inherit;font-size:17px;padding:12px 14px;border-radius:10px;border:1.5px solid var(--line);background:var(--surface);color:var(--fg)}
+.btn{border:0;border-radius:10px;padding:12px 16px;font-weight:700;background:var(--honey);color:var(--honey-ink)}
+.btn.ghost{background:var(--sunk);color:var(--fg)}
+.btn:disabled{opacity:.45;cursor:default}
+
+.list{display:flex;flex-direction:column;border:1px solid var(--line);border-radius:12px;overflow:hidden;background:var(--surface)}
+.row{display:flex;align-items:center;gap:12px;padding:12px 14px;border:0;border-top:1px solid var(--line);background:none;text-align:left;width:100%}
+.row:first-child{border-top:0}
+.row .main{flex:1;min-width:0}
+.row .main b{display:block}
+.row .main small{color:var(--muted)}
+.pill{font-size:11px;font-weight:700;padding:3px 8px;border-radius:99px;background:var(--honey-soft);color:var(--fg);white-space:nowrap}
+
+.tabs{display:flex;gap:6px;background:var(--sunk);padding:4px;border-radius:11px}
+.tabs button{flex:1;border:0;background:none;padding:9px;border-radius:8px;font-weight:600;color:var(--muted)}
+.tabs button[aria-pressed=true]{background:var(--surface);color:var(--fg);box-shadow:0 1px 2px rgb(0 0 0 / .08)}
+
+.toolbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.toolbar input{font-size:15px;padding:9px 12px}
+.status{font-size:12px;color:var(--muted)}
+
+/* match card */
+.match{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:10px 12px;display:grid;grid-template-columns:58px 1fr;gap:4px 10px;align-items:center}
+.match.next{border-color:var(--honey);box-shadow:0 0 0 2px var(--honey-soft)}
+.mnum{grid-row:span 2;font-family:var(--f-mono);font-weight:700;font-size:18px;display:flex;flex-direction:column;line-height:1.1}
+.mnum small{font-family:var(--f-body);font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-top:3px}
+.mnum small.nx{color:var(--honey)}
+.alli{display:flex;gap:6px}
+.tm{flex:1;min-width:0;border:0;border-radius:8px;padding:8px 4px;font-family:var(--f-mono);font-weight:700;font-size:15px;position:relative}
+.tm.r{background:var(--red-soft);color:var(--red)}
+.tm.b{background:var(--blue-soft);color:var(--blue)}
+.tm.mine{outline:2px solid var(--honey);outline-offset:-2px}
+.tm.done::after{content:"✓";position:absolute;top:2px;right:5px;font-size:11px;color:var(--ok)}
+.tm.done{opacity:.6}
+
+/* scoring */
+.scorehead{display:flex;align-items:center;gap:12px}
+.scorehead .tag{font-family:var(--f-mono);font-weight:700;font-size:28px;padding:4px 12px;border-radius:10px}
+.tag.r{background:var(--red-soft);color:var(--red)}
+.tag.b{background:var(--blue-soft);color:var(--blue)}
+.counters{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.counter{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:12px;display:flex;flex-direction:column;gap:8px;align-items:center}
+.counter .n{font-family:var(--f-mono);font-size:44px;font-weight:700;line-height:1;font-variant-numeric:tabular-nums}
+.counter .pm{display:flex;gap:8px;width:100%}
+.counter .pm button{flex:1;border:0;border-radius:10px;padding:14px 0;font-size:22px;font-weight:800}
+.pm .minus{background:var(--sunk)}
+.pm .plus{background:var(--honey);color:var(--honey-ink)}
+
+.fieldwrap{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:12px;display:flex;flex-direction:column;gap:8px}
+.fieldframe{display:grid;grid-template-columns:18px 1fr 18px;grid-template-rows:auto 1fr auto;gap:4px;align-items:center}
+.side{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;text-align:center;color:var(--muted)}
+.side.v{writing-mode:vertical-rl;transform:rotate(180deg)}
+.side.v.right{transform:none}
+.side.red{color:var(--red)} .side.blue{color:var(--blue)}
+.grid{display:grid;grid-template-columns:repeat(6,1fr);gap:3px;aspect-ratio:1;max-width:100%;background:var(--line);border-radius:8px;padding:3px}
+.tile{border:0;border-radius:5px;background:var(--sunk);font-family:var(--f-mono);font-size:11px;color:var(--muted);padding:0;position:relative}
+.tile[aria-pressed=true]{background:var(--honey);color:var(--honey-ink);font-weight:700}
+.tile .heat{position:absolute;inset:0;border-radius:5px;background:var(--honey)}
+.tile .lbl{position:relative}
+
+.savebar{position:fixed;left:0;right:0;bottom:0;background:var(--surface);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom,0px);z-index:6}
+.savebar .wrap{display:flex;gap:10px;padding-block:12px}
+.savebar .btn{flex:1;font-size:17px;padding:15px}
+.savebar .btn.ghost{flex:0 0 auto}
+
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(90px + env(safe-area-inset-bottom,0px));background:var(--fg);color:var(--bg);padding:10px 16px;border-radius:99px;font-weight:600;font-size:14px;z-index:20;max-width:calc(100% - 32px)}
+.note{font-size:13px;color:var(--muted);background:var(--sunk);border-radius:10px;padding:10px 12px}
+.empty{text-align:center;color:var(--muted);padding:24px 8px}
+
+/* team summary */
+.team{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px;display:grid;grid-template-columns:1fr 112px;gap:12px;align-items:center}
+.team .num{font-family:var(--f-mono);font-weight:700;font-size:20px}
+.stats{display:flex;gap:14px;margin-top:4px}
+.stat b{font-family:var(--f-mono);font-size:18px;display:block;font-variant-numeric:tabular-nums}
+.stat span{font-size:11px;color:var(--muted)}
+.mini{display:grid;grid-template-columns:repeat(6,1fr);gap:2px;aspect-ratio:1;background:var(--line);padding:2px;border-radius:5px}
+.mini i{background:var(--sunk);border-radius:2px;position:relative;overflow:hidden}
+.mini i b{position:absolute;inset:0;background:var(--honey)}
+@media (prefers-reduced-motion:no-preference){.tile,.tm,.btn{transition:transform .08s}.tile:active,.tm:active,.btn:active,.pm button:active{transform:scale(.95)}}
+</style>
+</head>
+<body>
+
+<header class="top"><div class="wrap">
+  <svg class="logo" viewBox="0 0 32 32" aria-hidden="true"><path d="M16 2l12 7v14l-12 7-12-7V9z" fill="var(--honey)"/><path d="M16 9l6 3.5v7L16 23l-6-3.5v-7z" fill="var(--honey-ink)" opacity=".85"/></svg>
+  <div class="brand">Hive Scout</div>
+  <div class="evt" id="evtBox" hidden><b id="evtName"></b><span id="evtCode"></span> · <button class="linkbtn" id="changeEvt">Change</button></div>
+</div></header>
+
+<main class="wrap" id="app"></main>
+<div class="savebar" id="savebar" hidden><div class="wrap">
+  <button class="btn ghost" id="cancelBtn">Back</button>
+  <button class="btn" id="saveBtn">Save match</button>
+</div></div>
+<div class="toast" id="toast" hidden></div>
+
+<script>
+const SEASON = 2026;
+const API = "https://api.ftcscout.org/rest/v1";
+const ROWS = ["A","B","C","D","E","F"];
+const app = document.getElementById("app");
+
+const ls = {
+  get(k, d){ try{ const v = localStorage.getItem(k); return v==null? d : JSON.parse(v);}catch(e){ return d; } },
+  set(k, v){ try{ localStorage.setItem(k, JSON.stringify(v)); }catch(e){} }
+};
+
+const S = {
+  view: "event",          // event | matches | score
+  tab: "matches",         // matches | teams
+  myTeam: ls.get("hs.myTeam", ""),
+  event: ls.get("hs.event", null),
+  matches: [],
+  matchStatus: "",
+  filter: "",
+  onlyMine: ls.get("hs.onlyMine", false),
+  entries: {},            // id -> entry
+  importOpen: false, importMsg: "",
+  cur: null,              // scoring draft
+  eventResults: null, eventMsg: ""
+};
+
+/* ---------- helpers ---------- */
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+function toast(msg){ const t = document.getElementById("toast"); t.textContent = msg; t.hidden = false; clearTimeout(toast._t); toast._t = setTimeout(()=>t.hidden=true, 2200); }
+function matchLabel(m){
+  if (m.tournamentLevel === "Quals") return "Q" + m.id;
+  if (m.tournamentLevel === "Finals") return "F" + (m.series || "") ;
+  return (m.tournamentLevel === "Semis" ? "SF" : "P") + (m.series || m.id);
+}
+function levelOrder(l){ return {Quals:0, Semis:1, DoubleElim:1, Playoffs:1, Finals:2}[l] ?? 1; }
+function entryId(code, m, team){ return `${code}_${m.tournamentLevel}-${m.id}_${team}`; }
+function fmtDate(s){ try{ return new Date(s+"T12:00:00").toLocaleDateString(undefined,{month:"short",day:"numeric"}); }catch(e){ return s; } }
+function today(){ const d = new Date(); return d.toISOString().slice(0,10); }
+async function getJSON(url){ const r = await fetch(url); if (!r.ok) throw new Error(r.status); return r.json(); }
+
+/* ---------- event picking ---------- */
+async function findEventsForTeam(team){
+  S.eventMsg = "Looking up team " + team + "…"; S.eventResults = null; render();
+  try{
+    const parts = await getJSON(`${API}/teams/${team}/events/${SEASON}`);
+    const evs = await Promise.all(parts.map(p => getJSON(`${API}/events/${SEASON}/${p.eventCode}`).catch(()=>null)));
+    S.eventResults = sortEvents(evs.filter(Boolean));
+    S.eventMsg = S.eventResults.length ? "" : `Team ${team} isn't registered for any BioBuzz events yet.`;
+  }catch(e){ S.eventMsg = "Couldn't find that team. Check the number and your connection."; S.eventResults = []; }
+  render();
+}
+async function searchEvents(q){
+  S.eventMsg = "Searching…"; S.eventResults = null; render();
+  try{
+    const r = await getJSON(`${API}/events/search/${SEASON}?searchText=${encodeURIComponent(q)}&limit=25`);
+    S.eventResults = sortEvents(r); S.eventMsg = r.length ? "" : "No events match that search.";
+  }catch(e){ S.eventMsg = "Search failed. Check your connection."; S.eventResults = []; }
+  render();
+}
+async function loadTodaysEvents(){
+  try{
+    const t = today();
+    const r = await getJSON(`${API}/events/search/${SEASON}?start=${t}&end=${t}&limit=60`);
+    S.todays = r.filter(e => e.start <= t && e.end >= t);
+    if (S.view === "event") render();
+  }catch(e){}
+}
+function sortEvents(list){
+  const t = today();
+  const rank = e => (e.start <= t && e.end >= t) ? 0 : (e.start > t ? 1 : 2);
+  return list.sort((a,b) => rank(a)-rank(b) || (rank(a)===2 ? b.start.localeCompare(a.start) : a.start.localeCompare(b.start)));
+}
+function pickEvent(e){
+  S.event = {code:e.code, name:e.name, start:e.start, end:e.end, city:e.city};
+  ls.set("hs.event", S.event);
+  S.matches = ls.get("hs.matches." + e.code, []);
+  S.view = "matches"; S.tab = "matches";
+  subscribeEntries(); loadMatches(); render();
+}
+
+/* ---------- matches ---------- */
+async function loadMatches(){
+  if (!S.event) return;
+  S.matchStatus = "Updating schedule…"; if (S.view==="matches") renderStatus();
+  try{
+    const r = await getJSON(`${API}/events/${SEASON}/${S.event.code}/matches`);
+    r.sort((a,b) => levelOrder(a.tournamentLevel)-levelOrder(b.tournamentLevel) || (a.series-b.series) || (a.id-b.id));
+    S.matches = r; ls.set("hs.matches." + S.event.code, r);
+    S.matchStatus = r.length ? "Schedule updated " + new Date().toLocaleTimeString([], {hour:"numeric", minute:"2-digit"}) : "No schedule posted yet. It appears here once the event publishes it.";
+  }catch(e){
+    S.matchStatus = S.matches.length ? "Offline. Showing the last schedule you loaded." : "Couldn't load the schedule. Check your connection.";
+  }
+  if (S.view === "matches") render();
+}
+setInterval(() => { if (S.view === "matches" && document.visibilityState === "visible") loadMatches(); }, 60000);
+
+/* ---------- storage: this device, merged across scouts by copy/paste ---------- */
+function subscribeEntries(){
+  S.entries = {};
+  const local = ls.get("hs.entries", {});
+  for (const [k,v] of Object.entries(local)) if (S.event && v.event === S.event.code) S.entries[k] = v;
+}
+async function saveEntry(entry){
+  const local = ls.get("hs.entries", {}); local[entry.id] = entry; ls.set("hs.entries", local);
+  S.entries[entry.id] = entry;
+  return "device";
+}
+const CSV_HEAD = ["event","level","match_id","match","team","alliance","auto_tips","teleop_tips","tiles","saved_at"];
+function toCSV(list){
+  const rows = [CSV_HEAD];
+  list.sort((a,b)=>a.matchId-b.matchId || a.team-b.team).forEach(x => rows.push([x.event,x.level,x.matchId,x.match,x.team,x.alliance,x.autoTips,x.teleTips,(x.tiles||[]).join(" "),x.savedAt||""]));
+  return rows.map(r=>r.join(",")).join("\n");
+}
+function importCSV(text){
+  const lines = text.trim().split(/\r?\n/).map(l => l.split(",").map(c => c.trim()));
+  const hi = lines.findIndex(l => l[0] === "event" && l.includes("auto_tips"));
+  if (hi < 0) return {added:0, updated:0, error:"That doesn't look like Hive Scout data. Paste what another scout copied with Copy data."};
+  const h = lines[hi], col = n => h.indexOf(n);
+  const local = ls.get("hs.entries", {}); let added = 0, updated = 0;
+  for (const l of lines.slice(hi+1)){
+    if (l.length < h.length) continue;
+    const e = {event:l[col("event")], season:SEASON, level:l[col("level")], matchId:+l[col("match_id")], match:l[col("match")],
+      team:+l[col("team")], alliance:l[col("alliance")], autoTips:+l[col("auto_tips")]||0, teleTips:+l[col("teleop_tips")]||0,
+      tiles:(l[col("tiles")]||"").split(" ").filter(t => /^[A-F][1-6]$/.test(t)), savedAt:l[col("saved_at")]||""};
+    if (!e.event || !e.team || !e.matchId) continue;
+    e.id = `${e.event}_${e.level}-${e.matchId}_${e.team}`;
+    const old = local[e.id];
+    if (!old){ local[e.id] = e; added++; }
+    else if ((e.savedAt||"") > (old.savedAt||"")){ local[e.id] = e; updated++; }
+  }
+  ls.set("hs.entries", local); subscribeEntries();
+  return {added, updated};
+}
+
+/* ---------- scoring ---------- */
+function openScore(m, t){
+  const id = entryId(S.event.code, m, t.teamNumber);
+  const prev = S.entries[id];
+  S.cur = {
+    id, event:S.event.code, season:SEASON, level:m.tournamentLevel, matchId:m.id, match:matchLabel(m),
+    team:t.teamNumber, alliance:t.alliance,
+    autoTips: prev?.autoTips ?? 0, teleTips: prev?.teleTips ?? 0,
+    tiles: [...(prev?.tiles ?? [])], edited: !!prev
+  };
+  S.view = "score"; render(); window.scrollTo(0,0);
+}
+
+/* ---------- render ---------- */
+function render(){
+  const evtBox = document.getElementById("evtBox");
+  evtBox.hidden = !S.event || S.view === "event";
+  if (S.event){ document.getElementById("evtName").textContent = S.event.name; document.getElementById("evtCode").textContent = S.event.code; }
+  document.getElementById("savebar").hidden = S.view !== "score";
+  if (S.view === "event") app.innerHTML = viewEvent();
+  else if (S.view === "matches") app.innerHTML = S.tab === "teams" ? viewTabs() + viewTeams() : viewTabs() + viewMatches();
+  else app.innerHTML = viewScore();
+}
+function renderStatus(){ const el = document.getElementById("mstatus"); if (el) el.textContent = S.matchStatus; }
+
+function viewEvent(){
+  const evRow = e => `<button class="row" data-pick="${esc(e.code)}"><div class="main"><b>${esc(e.name)}</b><small>${esc(e.code)} · ${esc(e.city||"")} · ${fmtDate(e.start)}${e.end!==e.start?"–"+fmtDate(e.end):""}</small></div>${(e.start<=today()&&e.end>=today())?'<span class="pill">Today</span>':""}</button>`;
+  let results = "";
+  if (S.eventMsg) results += `<p class="sub">${esc(S.eventMsg)}</p>`;
+  if (S.eventResults && S.eventResults.length) results += `<div class="list">${S.eventResults.map(evRow).join("")}</div>`;
+  const todays = (!S.eventResults && S.todays && S.todays.length) ? `<div class="lab">Happening today</div><div class="list">${S.todays.map(evRow).join("")}</div>` : "";
+  window._evcache = [...(S.eventResults||[]), ...(S.todays||[])];
+  return `
+  <div><h1>Which competition are you at?</h1><p class="sub">Enter your team number and we'll pull the events you're registered for, with the live match schedule.</p></div>
+  <form class="field" id="teamForm"><input id="teamIn" type="number" inputmode="numeric" placeholder="Your team number" value="${esc(S.myTeam)}"><button class="btn">Find</button></form>
+  <form class="field" id="searchForm"><input id="searchIn" type="search" placeholder="Or search event name or code"><button class="btn ghost">Search</button></form>
+  ${results}${todays}
+  <p class="note">Schedules come from FTCScout, which mirrors the official FIRST results. New matches show up within a minute or two of the scoring system posting them.</p>`;
+}
+
+function viewTabs(){
+  return `<div class="tabs" role="group"><button data-tab="matches" aria-pressed="${S.tab==="matches"}">Matches</button><button data-tab="teams" aria-pressed="${S.tab==="teams"}">Teams</button></div>`;
+}
+
+function viewMatches(){
+  const nextIdx = S.matches.findIndex(m => !m.hasBeenPlayed);
+  let list = S.matches.map((m,i)=>({m,i}));
+  const f = S.filter.trim();
+  if (f) list = list.filter(({m}) => (m.teams||[]).some(t => String(t.teamNumber).includes(f)));
+  if (S.onlyMine && S.myTeam) list = list.filter(({m}) => (m.teams||[]).some(t => String(t.teamNumber) === String(S.myTeam)));
+  const card = ({m,i}) => {
+    const red = (m.teams||[]).filter(t=>t.alliance==="Red"), blue = (m.teams||[]).filter(t=>t.alliance==="Blue");
+    const chip = t => {
+      const done = !!S.entries[entryId(S.event.code, m, t.teamNumber)];
+      const mine = String(t.teamNumber) === String(S.myTeam);
+      return `<button class="tm ${t.alliance==="Red"?"r":"b"} ${done?"done":""} ${mine?"mine":""}" data-m="${i}" data-t="${t.teamNumber}" aria-label="Scout team ${t.teamNumber} in ${matchLabel(m)}${done?" (scouted)":""}">${t.teamNumber}</button>`;
+    };
+    const time = m.scheduledStartTime ? new Date(m.scheduledStartTime).toLocaleTimeString([], {hour:"numeric", minute:"2-digit"}) : "";
+    const tagline = i===nextIdx ? '<small class="nx">Up next</small>' : `<small>${m.hasBeenPlayed ? "Played" : esc(time)}</small>`;
+    return `<div class="match ${i===nextIdx?"next":""}" ${i===nextIdx?'id="nextMatch"':""}><div class="mnum">${matchLabel(m)}${tagline}</div><div class="alli">${red.map(chip).join("")}</div><div class="alli">${blue.map(chip).join("")}</div></div>`;
+  };
+  return `
+  <div class="toolbar"><input id="filterIn" type="search" inputmode="numeric" placeholder="Filter by team #" value="${esc(S.filter)}" style="flex:1">
+  ${S.myTeam ? `<button class="btn ghost" id="mineBtn" aria-pressed="${S.onlyMine}">${S.onlyMine ? "All matches" : "Only "+esc(S.myTeam)}</button>` : ""}
+  <button class="btn ghost" id="refreshBtn" aria-label="Refresh schedule">↻</button></div>
+  <div class="status" id="mstatus">${esc(S.matchStatus)}</div>
+  ${list.length ? list.map(card).join("") : `<div class="empty">${S.matches.length ? "No matches for that filter." : "No schedule yet. Tap ↻ to check again."}</div>`}
+  <p class="note">Tap a team number to scout that robot. ✓ means it's saved on this phone. To combine scouts' data, use Copy data and Import on the Teams tab.</p>`;
+}
+
+function viewScore(){
+  const c = S.cur, a = c.alliance === "Red" ? "r" : "b";
+  const tiles = [];
+  for (let r=0;r<6;r++) for (let col=1;col<=6;col++){
+    const k = ROWS[r]+col; const on = c.tiles.includes(k);
+    tiles.push(`<button class="tile" data-tile="${k}" aria-pressed="${on}" aria-label="Tile ${k}"><span class="lbl">${k}</span></button>`);
+  }
+  return `
+  <div class="scorehead"><div class="tag ${a}">${c.team}</div><div><h2>${esc(c.match)} · ${c.alliance} alliance</h2><p class="sub">${c.edited ? "Editing a saved entry" : "New entry"}</p></div></div>
+  <div><div class="lab" style="margin-bottom:8px">Hive tips</div>
+  <div class="counters">
+    <div class="counter"><div class="lab">Auto</div><div class="n" id="n-autoTips">${c.autoTips}</div><div class="pm"><button class="minus" data-dec="autoTips" aria-label="Remove auto tip">−</button><button class="plus" data-inc="autoTips" aria-label="Add auto tip">+</button></div></div>
+    <div class="counter"><div class="lab">TeleOp</div><div class="n" id="n-teleTips">${c.teleTips}</div><div class="pm"><button class="minus" data-dec="teleTips" aria-label="Remove TeleOp tip">−</button><button class="plus" data-inc="teleTips" aria-label="Add TeleOp tip">+</button></div></div>
+  </div></div>
+  <div class="fieldwrap">
+    <div style="display:flex;justify-content:space-between;align-items:baseline"><div class="lab">Shot from (tap every tile)</div><button class="linkbtn" id="clearTiles">Clear</button></div>
+    <div class="fieldframe">
+      <span></span><div class="side">Far wall</div><span></span>
+      <div class="side v red">Red side</div>
+      <div class="grid">${tiles.join("")}</div>
+      <div class="side v right blue">Blue side</div>
+      <span></span><div class="side">Audience</div><span></span>
+    </div>
+  </div>`;
+}
+
+function viewTeams(){
+  const by = {};
+  for (const e of Object.values(S.entries)){
+    if (!e || e.event !== S.event.code) continue;
+    (by[e.team] ||= []).push(e);
+  }
+  const teams = Object.entries(by).map(([team, es]) => {
+    const n = es.length, sum = k => es.reduce((s,e)=>s+(e[k]||0),0);
+    const heat = {}; es.forEach(e => (e.tiles||[]).forEach(t => heat[t]=(heat[t]||0)+1));
+    return {team, n, auto:sum("autoTips")/n, tele:sum("teleTips")/n, heat};
+  }).sort((a,b) => (b.auto+b.tele)-(a.auto+a.tele));
+  const n = Object.values(S.entries).filter(e => e.event === S.event.code).length;
+  const tools = `<div class="toolbar"><span class="status" style="flex:1">${teams.length} teams · ${n} entries on this phone</span><button class="btn ghost" id="copyCsv">Copy data</button><button class="btn ghost" id="importToggle">Import</button></div>
+  <textarea id="csvOut" hidden readonly style="width:100%;height:140px;font-family:var(--f-mono);font-size:12px;background:var(--surface);color:var(--fg);border:1px solid var(--line);border-radius:10px;padding:8px"></textarea>
+  <div ${S.importOpen ? "" : "hidden"} style="display:flex;flex-direction:column;gap:8px">
+    <p class="sub">Paste data another scout copied with Copy data. Matching entries keep whichever was saved most recently.</p>
+    <textarea id="importIn" placeholder="event,level,match_id,match,team,..." style="width:100%;height:140px;font-family:var(--f-mono);font-size:12px;background:var(--surface);color:var(--fg);border:1.5px solid var(--line);border-radius:10px;padding:8px"></textarea>
+    <button class="btn" id="importGo">Merge into this phone</button>
+    ${S.importMsg ? `<p class="sub">${esc(S.importMsg)}</p>` : ""}
+  </div>`;
+  if (!teams.length) return tools + `<div class="empty"><h2>No scouting data yet</h2><p>Scouted matches show up here, ranked by average hive tips, with a heat map of where each team shoots from.</p></div>`;
+  const card = t => {
+    const max = Math.max(1, ...Object.values(t.heat));
+    let cells = ""; for (let r=0;r<6;r++) for (let c=1;c<=6;c++){ const v = t.heat[ROWS[r]+c]||0; cells += `<i title="${ROWS[r]+c}: ${v}">${v?`<b style="opacity:${(.25+.75*v/max).toFixed(2)}"></b>`:""}</i>`; }
+    return `<div class="team"><div><div class="num">${esc(t.team)}</div>
+      <div class="stats"><div class="stat"><b>${t.auto.toFixed(1)}</b><span>auto tips</span></div><div class="stat"><b>${t.tele.toFixed(1)}</b><span>teleop tips</span></div><div class="stat"><b>${t.n}</b><span>matches</span></div></div></div>
+      <div class="mini" aria-label="Shooting tiles heat map">${cells}</div></div>`;
+  };
+  return tools + `<div class="status">Ranked by average hive tips per match</div>` + teams.map(card).join("");
+}
+
+/* ---------- events ---------- */
+app.addEventListener("submit", e => {
+  e.preventDefault();
+  if (e.target.id === "teamForm"){ const v = document.getElementById("teamIn").value.trim(); if (!v) return; S.myTeam = v; ls.set("hs.myTeam", v); findEventsForTeam(v); }
+  if (e.target.id === "searchForm"){ const v = document.getElementById("searchIn").value.trim(); if (v) searchEvents(v); }
+});
+app.addEventListener("input", e => {
+  if (e.target.id === "filterIn"){ S.filter = e.target.value; const pos = e.target.selectionStart; render(); const el = document.getElementById("filterIn"); el.focus(); try{ el.setSelectionRange(pos,pos);}catch(_){} }
+});
+app.addEventListener("click", async e => {
+  const b = e.target.closest("button"); if (!b) return;
+  if (b.dataset.pick){ const ev = window._evcache.find(x => x.code === b.dataset.pick); if (ev) pickEvent(ev); return; }
+  if (b.dataset.tab){ S.tab = b.dataset.tab; render(); return; }
+  if (b.id === "refreshBtn"){ loadMatches(); return; }
+  if (b.id === "mineBtn"){ S.onlyMine = !S.onlyMine; ls.set("hs.onlyMine", S.onlyMine); render(); return; }
+  if (b.dataset.m != null){ const m = S.matches[+b.dataset.m]; const t = m.teams.find(x => String(x.teamNumber) === b.dataset.t); openScore(m, t); return; }
+  if (b.dataset.inc){ S.cur[b.dataset.inc]++; document.getElementById("n-"+b.dataset.inc).textContent = S.cur[b.dataset.inc]; return; }
+  if (b.dataset.dec){ S.cur[b.dataset.dec] = Math.max(0, S.cur[b.dataset.dec]-1); document.getElementById("n-"+b.dataset.dec).textContent = S.cur[b.dataset.dec]; return; }
+  if (b.dataset.tile){ const k = b.dataset.tile, i = S.cur.tiles.indexOf(k); if (i<0) S.cur.tiles.push(k); else S.cur.tiles.splice(i,1); b.setAttribute("aria-pressed", i<0); return; }
+  if (b.id === "clearTiles"){ S.cur.tiles = []; document.querySelectorAll(".tile").forEach(t => t.setAttribute("aria-pressed","false")); return; }
+  if (b.id === "copyCsv"){
+    const csv = toCSV(Object.values(S.entries).filter(x=>x.event===S.event.code));
+    try{ await navigator.clipboard.writeText(csv); toast("Copied. Send it to your lead scout."); }
+    catch(_){ const ta = document.getElementById("csvOut"); ta.hidden = false; ta.value = csv; ta.select(); toast("Select all and copy"); }
+    return;
+  }
+  if (b.id === "importToggle"){ S.importOpen = !S.importOpen; S.importMsg = ""; render(); return; }
+  if (b.id === "importGo"){
+    const r = importCSV(document.getElementById("importIn").value);
+    S.importMsg = r.error || `Added ${r.added} new entries, updated ${r.updated}.`;
+    render(); return;
+  }
+});
+document.getElementById("cancelBtn").onclick = () => { S.view = "matches"; render(); scrollToNext(); };
+document.getElementById("saveBtn").onclick = async () => {
+  const btn = document.getElementById("saveBtn"); btn.disabled = true; btn.textContent = "Saving…";
+  const c = S.cur;
+  const entry = {id:c.id, event:c.event, season:c.season, level:c.level, matchId:c.matchId, match:c.match, team:c.team, alliance:c.alliance, autoTips:c.autoTips, teleTips:c.teleTips, tiles:[...c.tiles].sort(), savedAt:new Date().toISOString()};
+  await saveEntry(entry);
+  btn.disabled = false; btn.textContent = "Save match";
+  S.view = "matches"; S.tab = "matches"; render(); scrollToNext();
+  toast(`Saved ${c.team} in ${c.match}`);
+};
+document.getElementById("changeEvt").onclick = () => { S.view = "event"; S.eventResults = null; S.eventMsg = ""; render(); loadTodaysEvents(); if (S.myTeam) findEventsForTeam(S.myTeam); };
+function scrollToNext(){ requestAnimationFrame(() => document.getElementById("nextMatch")?.scrollIntoView({block:"center"})); }
+
+/* ---------- boot ---------- */
+if (S.event){ S.view = "matches"; S.matches = ls.get("hs.matches."+S.event.code, []); subscribeEntries(); loadMatches().then(scrollToNext); }
+else { loadTodaysEvents(); if (S.myTeam) findEventsForTeam(S.myTeam); }
+render();
+</script>
+</body>
+</html>
