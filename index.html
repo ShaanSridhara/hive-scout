@@ -15,7 +15,7 @@
 <style>
 /* Layout: one-column phone app, sticky top bar, three views (event → matches → score) plus a team summary view */
 :root{
-  --bg:#FBF8F1; --surface:#FFFFFF; --sunk:#F2ECDD; --fg:#211C12; --muted:#6E6550; --line:#E3DAC4;
+  --bg:#FBF8F1; --surface:#FFFFFF; --sunk:#F2ECDD; --fg:#211C12; --muted:#6E6550; --line:#E3DAC4; --mat:#E4DED0; --seam:#CFC6B2; --wall:#8C826C;
   --honey:#D98E04; --honey-ink:#2A1C00; --honey-soft:#FCEBC4;
   --red:#D23A2E; --red-soft:#FBE1DE; --blue:#2C62D6; --blue-soft:#DEE7FB; --ok:#2F8A4C;
   --f-display:"Sora",ui-sans-serif,system-ui,sans-serif;
@@ -23,11 +23,11 @@
   --f-mono:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
 }
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
-  --bg:#15120C; --surface:#1F1B13; --sunk:#2A251A; --fg:#F3EDDF; --muted:#A99F88; --line:#3A3326;
+  --bg:#15120C; --surface:#1F1B13; --sunk:#2A251A; --fg:#F3EDDF; --muted:#A99F88; --line:#3A3326; --mat:#2B271F; --seam:#3F382B; --wall:#6E6550;
   --honey:#F2B33D; --honey-ink:#1E1400; --honey-soft:#3B2D10;
   --red:#F06A5E; --red-soft:#3D1A17; --blue:#6E97F2; --blue-soft:#18243F; --ok:#5BC07A; color-scheme:dark}}
 :root[data-theme="dark"]{
-  --bg:#15120C; --surface:#1F1B13; --sunk:#2A251A; --fg:#F3EDDF; --muted:#A99F88; --line:#3A3326;
+  --bg:#15120C; --surface:#1F1B13; --sunk:#2A251A; --fg:#F3EDDF; --muted:#A99F88; --line:#3A3326; --mat:#2B271F; --seam:#3F382B; --wall:#6E6550;
   --honey:#F2B33D; --honey-ink:#1E1400; --honey-soft:#3B2D10;
   --red:#F06A5E; --red-soft:#3D1A17; --blue:#6E97F2; --blue-soft:#18243F; --ok:#5BC07A; color-scheme:dark}
 
@@ -107,16 +107,31 @@ input[type=text],input[type=number],input[type=search]{flex:1;min-width:0;font:i
 .pm .plus{background:var(--honey);color:var(--honey-ink)}
 
 .fieldwrap{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:12px;display:flex;flex-direction:column;gap:8px}
-.fieldframe{display:grid;grid-template-columns:18px 1fr 18px;grid-template-rows:auto 1fr auto;gap:4px;align-items:center}
+.fieldframe{display:grid;grid-template-columns:22px 1fr 22px;grid-template-rows:auto 1fr auto;gap:4px;align-items:stretch}
 .side{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;text-align:center;color:var(--muted)}
 .side.v{writing-mode:vertical-rl;transform:rotate(180deg)}
 .side.v.right{transform:none}
-.side.red{color:var(--red)} .side.blue{color:var(--blue)}
-.grid{display:grid;grid-template-columns:repeat(6,1fr);gap:3px;aspect-ratio:1;max-width:100%;background:var(--line);border-radius:8px;padding:3px}
-.tile{border:0;border-radius:5px;background:var(--sunk);font-family:var(--f-mono);font-size:11px;color:var(--muted);padding:0;position:relative}
-.tile[aria-pressed=true]{background:var(--honey);color:var(--honey-ink);font-weight:700}
-.tile .heat{position:absolute;inset:0;border-radius:5px;background:var(--honey)}
-.tile .lbl{position:relative}
+.side.red,.side.blue{display:flex;align-items:center;justify-content:center;border-radius:6px;font-size:9px}
+.side.red{color:var(--red);background:var(--red-soft)} .side.blue{color:var(--blue);background:var(--blue-soft)}
+.side.red{margin-block:16% 8%} .side.blue{margin-block:16% 8%}
+.grid{position:relative;display:grid;grid-template-columns:repeat(6,1fr);grid-template-rows:repeat(6,1fr);aspect-ratio:1;max-width:100%;background:var(--mat);border:4px solid var(--wall);border-radius:6px}
+.tile{border:0;border-right:1px dashed var(--seam);border-bottom:1px dashed var(--seam);background:transparent;font-family:var(--f-mono);font-size:10px;color:var(--muted);padding:3px 0 0 4px;position:relative;text-align:left;vertical-align:top;display:flex;align-items:flex-start;justify-content:flex-start;min-width:0}
+.tile:nth-child(6n+1){border-right:1px dashed var(--seam)}
+.tile[aria-pressed=true]{background:color-mix(in srgb,var(--honey) 72%,transparent);color:var(--honey-ink);font-weight:700}
+.tile .lbl{position:relative;z-index:2}
+.fieldsvg{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:1;overflow:visible}
+.legend{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:11px;color:var(--muted)}
+.legend span{display:inline-flex;align-items:center;gap:5px}
+.legend i{display:inline-block;width:12px;height:12px;border-radius:3px}
+.checks{display:grid;grid-template-columns:1fr;gap:8px}
+.check{display:flex;align-items:center;gap:12px;width:100%;text-align:left;background:var(--surface);border:1.5px solid var(--line);border-radius:12px;padding:12px 14px;font-weight:600}
+.check .box{flex:none;width:26px;height:26px;border-radius:7px;border:2px solid var(--line);display:grid;place-items:center;font-size:16px;color:transparent}
+.check small{display:block;font-weight:400;color:var(--muted);font-size:12px}
+.check[aria-pressed=true]{border-color:var(--red);background:var(--red-soft)}
+.check[aria-pressed=true] .box{background:var(--red);border-color:var(--red);color:#fff}
+.flags{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.flag{font-size:11px;font-weight:600;padding:3px 8px;border-radius:99px;background:var(--sunk);color:var(--muted)}
+.flag.bad{background:var(--red-soft);color:var(--red)}
 
 .savebar{position:fixed;left:0;right:0;bottom:0;background:var(--surface);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom,0px);z-index:6}
 .savebar .wrap{display:flex;gap:10px;padding-block:12px}
@@ -157,7 +172,24 @@ input[type=text],input[type=number],input[type=search]{flex:1;min-width:0;font:i
 <script>
 const SEASON = 2026;
 const API = "https://api.ftcscout.org/rest/v1";
-const ROWS = ["A","B","C","D","E","F"];
+const COLS = ["A","B","C","D","E","F"];
+// Official BioBuzz tile names (manual Fig. 9-5): columns A-F left to right, rows 1-6 from the audience wall.
+const tileAt = (r, c) => COLS[c] + (6 - r); // r = 0 is the far wall
+const CHECKS = [
+  {k:"jammed", label:"Nectar jammed in intake", hint:"A NECTAR got stuck in their intake"},
+  {k:"pushed", label:"Easily pushed around", hint:"Lost position when defended or bumped"},
+  {k:"dc", label:"Disconnected (DC)", hint:"Robot stopped or lost connection during the match"}
+];
+const FIELD_SVG = `<svg class="fieldsvg" viewBox="0 0 6 6" aria-hidden="true">
+  <rect x="0" y="1.02" width="0.46" height="0.96" style="fill:var(--red);fill-opacity:.22;stroke:var(--red);stroke-width:.035"/>
+  <rect x="5.54" y="4.02" width="0.46" height="0.96" style="fill:var(--blue);fill-opacity:.22;stroke:var(--blue);stroke-width:.035"/>
+  <rect x="0.02" y="5.9" width="0.94" height="0.08" style="fill:var(--red)"/>
+  <rect x="5.04" y="0.02" width="0.94" height="0.08" style="fill:var(--blue)"/>
+  <rect x="1.97" y="2.19" width="2.06" height="1.62" rx=".06" style="fill:none;stroke:var(--wall);stroke-width:.03;stroke-dasharray:.08 .06"/>
+  <line x1="2.5" y1="3" x2="3.5" y2="3" style="stroke:var(--wall);stroke-width:.06"/>
+  ${[[2.5,2.55,"red"],[2.5,3.45,"red"],[3.5,2.55,"blue"],[3.5,3.45,"blue"]].map(([x,y,c]) => `<polygon points="${x-.4},${y-.2} ${x+.4},${y-.2} ${x+.4},${y+.06} ${x},${y+.24} ${x-.4},${y+.06}" style="fill:var(--${c}-soft);fill-opacity:.85;stroke:var(--${c});stroke-width:.045;stroke-linejoin:round"/>`).join("")}
+  ${[[2,.1],[5.9,2],[.1,4],[4,5.9]].map(([x,y]) => `<circle cx="${x}" cy="${y}" r=".13" style="fill:var(--honey);stroke:var(--honey-ink);stroke-width:.035"/>`).join("")}
+</svg>`;
 const app = document.getElementById("app");
 
 const ls = {
@@ -261,10 +293,10 @@ async function saveEntry(entry){
   S.entries[entry.id] = entry;
   return "device";
 }
-const CSV_HEAD = ["event","level","match_id","match","team","alliance","auto_tips","teleop_tips","tiles","saved_at"];
+const CSV_HEAD = ["event","level","match_id","match","team","alliance","auto_tips","teleop_tips","tiles","nectar_jammed","pushed_around","disconnected","saved_at"];
 function toCSV(list){
   const rows = [CSV_HEAD];
-  list.sort((a,b)=>a.matchId-b.matchId || a.team-b.team).forEach(x => rows.push([x.event,x.level,x.matchId,x.match,x.team,x.alliance,x.autoTips,x.teleTips,(x.tiles||[]).join(" "),x.savedAt||""]));
+  list.sort((a,b)=>a.matchId-b.matchId || a.team-b.team).forEach(x => rows.push([x.event,x.level,x.matchId,x.match,x.team,x.alliance,x.autoTips,x.teleTips,(x.tiles||[]).join(" "),x.jammed?1:0,x.pushed?1:0,x.dc?1:0,x.savedAt||""]));
   return rows.map(r=>r.join(",")).join("\n");
 }
 function importCSV(text){
@@ -277,7 +309,8 @@ function importCSV(text){
     if (l.length < h.length) continue;
     const e = {event:l[col("event")], season:SEASON, level:l[col("level")], matchId:+l[col("match_id")], match:l[col("match")],
       team:+l[col("team")], alliance:l[col("alliance")], autoTips:+l[col("auto_tips")]||0, teleTips:+l[col("teleop_tips")]||0,
-      tiles:(l[col("tiles")]||"").split(" ").filter(t => /^[A-F][1-6]$/.test(t)), savedAt:l[col("saved_at")]||""};
+      tiles:(l[col("tiles")]||"").split(" ").filter(t => /^[A-F][1-6]$/.test(t)), savedAt:l[col("saved_at")]||"",
+      jammed: l[col("nectar_jammed")]==="1", pushed: l[col("pushed_around")]==="1", dc: l[col("disconnected")]==="1"};
     if (!e.event || !e.team || !e.matchId) continue;
     e.id = `${e.event}_${e.level}-${e.matchId}_${e.team}`;
     const old = local[e.id];
@@ -296,7 +329,8 @@ function openScore(m, t){
     id, event:S.event.code, season:SEASON, level:m.tournamentLevel, matchId:m.id, match:matchLabel(m),
     team:t.teamNumber, alliance:t.alliance,
     autoTips: prev?.autoTips ?? 0, teleTips: prev?.teleTips ?? 0,
-    tiles: [...(prev?.tiles ?? [])], edited: !!prev
+    tiles: [...(prev?.tiles ?? [])], edited: !!prev,
+    jammed: !!prev?.jammed, pushed: !!prev?.pushed, dc: !!prev?.dc
   };
   S.view = "score"; render(); window.scrollTo(0,0);
 }
@@ -323,7 +357,7 @@ function viewEvent(){
   return `
   <div><h1>Which competition are you at?</h1><p class="sub">Enter your team number and we'll pull the events you're registered for, with the live match schedule.</p></div>
   <form class="field" id="teamForm"><input id="teamIn" type="number" inputmode="numeric" placeholder="Your team number" value="${esc(S.myTeam)}"><button class="btn">Find</button></form>
-  <form class="field" id="searchForm"><input id="searchIn" type="search" placeholder="Or search event name or code"><button class="btn ghost">Search</button></form>
+  <form class="field" id="searchForm"><input id="searchIn" type="search" placeholder="Or search event name or code" value="${esc(S.searchQ||"")}"><button class="btn ghost">Search</button></form>
   ${results}${todays}
   <p class="note">Schedules come from FTCScout, which mirrors the official FIRST results. New matches show up within a minute or two of the scoring system posting them.</p>`;
 }
@@ -361,8 +395,8 @@ function viewMatches(){
 function viewScore(){
   const c = S.cur, a = c.alliance === "Red" ? "r" : "b";
   const tiles = [];
-  for (let r=0;r<6;r++) for (let col=1;col<=6;col++){
-    const k = ROWS[r]+col; const on = c.tiles.includes(k);
+  for (let r=0;r<6;r++) for (let col=0;col<6;col++){
+    const k = tileAt(r,col); const on = c.tiles.includes(k);
     tiles.push(`<button class="tile" data-tile="${k}" aria-pressed="${on}" aria-label="Tile ${k}"><span class="lbl">${k}</span></button>`);
   }
   return `
@@ -376,12 +410,15 @@ function viewScore(){
     <div style="display:flex;justify-content:space-between;align-items:baseline"><div class="lab">Shot from (tap every tile)</div><button class="linkbtn" id="clearTiles">Clear</button></div>
     <div class="fieldframe">
       <span></span><div class="side">Far wall</div><span></span>
-      <div class="side v red">Red side</div>
-      <div class="grid">${tiles.join("")}</div>
-      <div class="side v right blue">Blue side</div>
+      <div class="side v red">Red drivers</div>
+      <div class="grid">${tiles.join("")}${FIELD_SVG}</div>
+      <div class="side v right blue">Blue drivers</div>
       <span></span><div class="side">Audience</div><span></span>
     </div>
-  </div>`;
+    <div class="legend"><span><i style="background:var(--honey);border-radius:50%"></i>Flower</span><span><i style="background:var(--red-soft);border:1.5px solid var(--red)"></i>Hive cells</span><span><i style="border:1.5px solid var(--red);background:transparent"></i>Loading zone</span><span><i style="background:var(--red);height:4px"></i>Garden</span></div>
+  </div>
+  <div><div class="lab" style="margin-bottom:8px">Problems this match</div>
+  <div class="checks">${CHECKS.map(x => `<button class="check" data-check="${x.k}" aria-pressed="${!!c[x.k]}"><span class="box">✓</span><span>${x.label}<small>${x.hint}</small></span></button>`).join("")}</div></div>`;
 }
 
 function viewTeams(){
@@ -393,7 +430,8 @@ function viewTeams(){
   const teams = Object.entries(by).map(([team, es]) => {
     const n = es.length, sum = k => es.reduce((s,e)=>s+(e[k]||0),0);
     const heat = {}; es.forEach(e => (e.tiles||[]).forEach(t => heat[t]=(heat[t]||0)+1));
-    return {team, n, auto:sum("autoTips")/n, tele:sum("teleTips")/n, heat};
+    const cnt = k => es.filter(e => e[k]).length;
+    return {team, n, auto:sum("autoTips")/n, tele:sum("teleTips")/n, heat, jammed:cnt("jammed"), pushed:cnt("pushed"), dc:cnt("dc")};
   }).sort((a,b) => (b.auto+b.tele)-(a.auto+a.tele));
   const n = Object.values(S.entries).filter(e => e.event === S.event.code).length;
   const tools = `<div class="toolbar"><span class="status" style="flex:1">${teams.length} teams · ${n} entries on this phone</span><button class="btn ghost" id="copyCsv">Copy data</button><button class="btn ghost" id="importToggle">Import</button></div>
@@ -407,9 +445,10 @@ function viewTeams(){
   if (!teams.length) return tools + `<div class="empty"><h2>No scouting data yet</h2><p>Scouted matches show up here, ranked by average hive tips, with a heat map of where each team shoots from.</p></div>`;
   const card = t => {
     const max = Math.max(1, ...Object.values(t.heat));
-    let cells = ""; for (let r=0;r<6;r++) for (let c=1;c<=6;c++){ const v = t.heat[ROWS[r]+c]||0; cells += `<i title="${ROWS[r]+c}: ${v}">${v?`<b style="opacity:${(.25+.75*v/max).toFixed(2)}"></b>`:""}</i>`; }
+    let cells = ""; for (let r=0;r<6;r++) for (let c=0;c<6;c++){ const k = tileAt(r,c), v = t.heat[k]||0; cells += `<i title="${k}: ${v}">${v?`<b style="opacity:${(.25+.75*v/max).toFixed(2)}"></b>`:""}</i>`; }
     return `<div class="team"><div><div class="num">${esc(t.team)}</div>
-      <div class="stats"><div class="stat"><b>${t.auto.toFixed(1)}</b><span>auto tips</span></div><div class="stat"><b>${t.tele.toFixed(1)}</b><span>teleop tips</span></div><div class="stat"><b>${t.n}</b><span>matches</span></div></div></div>
+      <div class="stats"><div class="stat"><b>${t.auto.toFixed(1)}</b><span>auto tips</span></div><div class="stat"><b>${t.tele.toFixed(1)}</b><span>teleop tips</span></div><div class="stat"><b>${t.n}</b><span>matches</span></div></div>
+      <div class="flags"><span class="flag ${t.jammed?"bad":""}">Jammed ${t.jammed}/${t.n}</span><span class="flag ${t.pushed?"bad":""}">Pushed ${t.pushed}/${t.n}</span><span class="flag ${t.dc?"bad":""}">DC ${t.dc}/${t.n}</span></div></div>
       <div class="mini" aria-label="Shooting tiles heat map">${cells}</div></div>`;
   };
   return tools + `<div class="status">Ranked by average hive tips per match</div>` + teams.map(card).join("");
@@ -419,7 +458,7 @@ function viewTeams(){
 app.addEventListener("submit", e => {
   e.preventDefault();
   if (e.target.id === "teamForm"){ const v = document.getElementById("teamIn").value.trim(); if (!v) return; S.myTeam = v; ls.set("hs.myTeam", v); findEventsForTeam(v); }
-  if (e.target.id === "searchForm"){ const v = document.getElementById("searchIn").value.trim(); if (v) searchEvents(v); }
+  if (e.target.id === "searchForm"){ const v = document.getElementById("searchIn").value.trim(); S.searchQ = v; if (v) searchEvents(v); }
 });
 app.addEventListener("input", e => {
   if (e.target.id === "filterIn"){ S.filter = e.target.value; const pos = e.target.selectionStart; render(); const el = document.getElementById("filterIn"); el.focus(); try{ el.setSelectionRange(pos,pos);}catch(_){} }
@@ -434,6 +473,7 @@ app.addEventListener("click", async e => {
   if (b.dataset.inc){ S.cur[b.dataset.inc]++; document.getElementById("n-"+b.dataset.inc).textContent = S.cur[b.dataset.inc]; return; }
   if (b.dataset.dec){ S.cur[b.dataset.dec] = Math.max(0, S.cur[b.dataset.dec]-1); document.getElementById("n-"+b.dataset.dec).textContent = S.cur[b.dataset.dec]; return; }
   if (b.dataset.tile){ const k = b.dataset.tile, i = S.cur.tiles.indexOf(k); if (i<0) S.cur.tiles.push(k); else S.cur.tiles.splice(i,1); b.setAttribute("aria-pressed", i<0); return; }
+  if (b.dataset.check){ const k = b.dataset.check; S.cur[k] = !S.cur[k]; b.setAttribute("aria-pressed", S.cur[k]); return; }
   if (b.id === "clearTiles"){ S.cur.tiles = []; document.querySelectorAll(".tile").forEach(t => t.setAttribute("aria-pressed","false")); return; }
   if (b.id === "copyCsv"){
     const csv = toCSV(Object.values(S.entries).filter(x=>x.event===S.event.code));
@@ -452,7 +492,7 @@ document.getElementById("cancelBtn").onclick = () => { S.view = "matches"; rende
 document.getElementById("saveBtn").onclick = async () => {
   const btn = document.getElementById("saveBtn"); btn.disabled = true; btn.textContent = "Saving…";
   const c = S.cur;
-  const entry = {id:c.id, event:c.event, season:c.season, level:c.level, matchId:c.matchId, match:c.match, team:c.team, alliance:c.alliance, autoTips:c.autoTips, teleTips:c.teleTips, tiles:[...c.tiles].sort(), savedAt:new Date().toISOString()};
+  const entry = {id:c.id, event:c.event, season:c.season, level:c.level, matchId:c.matchId, match:c.match, team:c.team, alliance:c.alliance, autoTips:c.autoTips, teleTips:c.teleTips, tiles:[...c.tiles].sort(), jammed:c.jammed, pushed:c.pushed, dc:c.dc, savedAt:new Date().toISOString()};
   await saveEntry(entry);
   btn.disabled = false; btn.textContent = "Save match";
   S.view = "matches"; S.tab = "matches"; render(); scrollToNext();
