@@ -151,6 +151,89 @@ input[type=text],input[type=number],input[type=search]{flex:1;min-width:0;font:i
 .mini{display:grid;grid-template-columns:repeat(6,1fr);gap:2px;aspect-ratio:1;background:var(--line);padding:2px;border-radius:5px}
 .mini i{background:var(--sunk);border-radius:2px;position:relative;overflow:hidden}
 .mini i b{position:absolute;inset:0;background:var(--honey)}
+.tnote{font-size:12px;color:var(--muted);font-style:italic;margin-top:6px}
+
+/* live scoring */
+kbd{font-family:var(--f-mono);font-size:11px;font-weight:700;padding:2px 6px;border-radius:5px;background:var(--sunk);border:1px solid var(--line);border-bottom-width:2px;color:var(--fg);white-space:nowrap;line-height:1.3}
+.clock{border-radius:14px;padding:14px;background:var(--surface);border:2px solid var(--line);display:flex;flex-direction:column;gap:8px;color:var(--muted)}
+.clk-top{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.phase{font-family:var(--f-display);font-weight:800;font-size:20px;text-transform:uppercase;letter-spacing:.04em}
+.time{font-family:var(--f-mono);font-weight:700;font-size:46px;line-height:1;font-variant-numeric:tabular-nums;color:var(--fg)}
+.bar{height:6px;border-radius:99px;background:var(--sunk);overflow:hidden}
+.bar i{display:block;height:100%;background:currentColor}
+.clk-sub{font-size:13px;color:var(--muted);display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.ph-auto{border-color:var(--honey);color:var(--honey)}
+.ph-tele{border-color:var(--ok);color:var(--ok)}
+.ph-eg{border-color:var(--red);background:var(--red-soft);color:var(--red)}
+.ph-trans{border-style:dashed}
+.tally{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.tally div{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:10px;text-align:center}
+.tally b{display:block;font-family:var(--f-mono);font-size:30px;line-height:1.1;font-variant-numeric:tabular-nums}
+.tally span{font-size:11px;color:var(--muted);font-weight:600}
+.acts{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.act{display:flex;align-items:center;justify-content:space-between;gap:8px;text-align:left;padding:14px;border-radius:12px;border:1.5px solid var(--line);background:var(--surface);font-weight:700;font-size:16px;min-height:58px}
+.act small{display:block;font-size:12px;font-weight:500;color:var(--muted)}
+.act.main{grid-column:span 2;background:var(--honey);border-color:var(--honey);color:var(--honey-ink);font-size:20px;min-height:76px}
+.act.main small{color:var(--honey-ink);opacity:.75}
+.act.main kbd{background:rgb(0 0 0 / .12);border-color:rgb(0 0 0 / .15);color:var(--honey-ink)}
+.act.on{border-color:var(--red);background:var(--red-soft);color:var(--red)}
+.act[aria-disabled=true]{opacity:.5}
+.act.hit{background:var(--honey-soft);border-color:var(--honey)}
+.act.main.hit{filter:brightness(1.12)}
+/* made / miss shot pad */
+.shotpad{display:grid;grid-template-columns:1.9fr 1fr;gap:10px}
+.shot{position:relative;overflow:visible;display:flex;flex-direction:column;align-items:stretch;gap:2px;text-align:left;padding:14px 16px 12px;border-radius:18px;border:0;min-height:148px;user-select:none;-webkit-user-select:none;touch-action:manipulation}
+.shot-top{display:flex;justify-content:space-between;align-items:center;gap:6px}
+.shot-name{font-family:var(--f-display);font-weight:800;font-size:20px;letter-spacing:-.01em}
+.shot-n{font-family:var(--f-mono);font-weight:700;font-size:64px;line-height:1;margin-top:auto;font-variant-numeric:tabular-nums}
+.shot-sub{font-size:12px;font-weight:600;opacity:.8;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.shot.made{background:linear-gradient(160deg,#3DB065,#23804A);color:#fff;box-shadow:0 4px 0 #17603A,0 10px 24px rgb(35 128 74 / .35)}
+.shot.made kbd{background:rgb(255 255 255 / .2);border-color:rgb(255 255 255 / .3);color:#fff}
+.shot.miss{background:var(--surface);color:var(--red);border:2px solid var(--red);box-shadow:0 4px 0 var(--red-soft)}
+.shot.miss .shot-sub{color:var(--muted);opacity:1}
+.shot.hive{grid-column:span 2;min-height:0;padding:12px 16px;background:linear-gradient(160deg,#F2B33D,#D98E04);color:var(--honey-ink);box-shadow:0 4px 0 #9E6703,0 10px 24px rgb(217 142 4 / .3)}
+.shot.hive kbd{background:rgb(0 0 0 / .12);border-color:rgb(0 0 0 / .15);color:var(--honey-ink)}
+.shot.hive:active{box-shadow:0 1px 0 #9E6703}
+.hive-row{display:flex;align-items:baseline;gap:12px}
+.shot.hive .shot-n{font-size:44px;margin-top:0}
+.hive .float{color:var(--honey-ink);top:14px}
+.shot[aria-disabled=true]{filter:saturate(.35);opacity:.6}
+.shot:active{transform:translateY(3px);box-shadow:0 1px 0 #17603A}
+.shot.miss:active{box-shadow:0 1px 0 var(--red-soft)}
+.float{position:absolute;right:22px;top:46px;font-family:var(--f-display);font-weight:800;font-size:34px;pointer-events:none;opacity:0}
+.made .float{color:#fff;text-shadow:0 2px 8px rgb(0 0 0 / .3)}
+@media (prefers-reduced-motion:no-preference){
+  .shot{transition:transform .07s,box-shadow .07s}
+  .shot.pop{animation:pop .22s ease-out}
+  .shot.shake{animation:shake .25s ease-in-out}
+  .float{animation:floatup .6s ease-out forwards}
+  @keyframes pop{0%{transform:scale(.94)}55%{transform:scale(1.04)}100%{transform:scale(1)}}
+  @keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+  @keyframes floatup{0%{opacity:1;transform:translateY(0) scale(.8)}100%{opacity:0;transform:translateY(-44px) scale(1.15)}}
+}
+.tile.cur{outline:3px solid var(--fg);outline-offset:-3px;z-index:3}
+.log{list-style:none;margin:0;padding:0;background:var(--surface);border:1px solid var(--line);border-radius:12px}
+.log li{display:flex;align-items:center;gap:10px;padding:8px 12px;border-top:1px solid var(--line);font-size:14px}
+.log li:first-child{border-top:0}
+.log .lt{font-family:var(--f-mono);font-size:12px;color:var(--muted);min-width:34px}
+.log .lp{font-size:10px;font-weight:700;padding:1px 6px;border-radius:99px;background:var(--honey-soft)}
+.log .lp.tele{background:color-mix(in srgb,var(--ok) 20%,transparent)}
+.log .x{margin-left:auto;border:0;background:none;color:var(--muted);font-size:16px;padding:0 4px}
+.keys{display:flex;flex-wrap:wrap;gap:6px 12px;font-size:12px;color:var(--muted)}
+.keys span{display:inline-flex;gap:5px;align-items:center}
+.btn.go{background:var(--ok);color:var(--bg);font-size:20px;letter-spacing:.04em}
+.btn.go kbd{background:rgb(0 0 0 / .15);border-color:transparent;color:inherit}
+.seg{display:flex;gap:6px}
+.seg button{flex:1;border:1.5px solid var(--line);background:var(--surface);border-radius:10px;padding:10px 0;font-weight:600}
+.seg button[aria-pressed=true]{background:var(--honey);border-color:var(--honey);color:var(--honey-ink)}
+.q{display:flex;flex-direction:column;gap:6px}
+.q .ends{display:flex;justify-content:space-between;font-size:11px;color:var(--muted)}
+.sumcard{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:12px;display:grid;grid-template-columns:1fr 104px;gap:12px;align-items:center}
+.sumcard .stats{flex-wrap:wrap;margin:0}
+textarea.notes{width:100%;min-height:90px;font:inherit;padding:10px 12px;border-radius:10px;border:1.5px solid var(--line);background:var(--surface);color:var(--fg);resize:vertical}
+details.mlog summary{cursor:pointer;font-weight:600;padding:4px 0}
+.demo-pill{font-size:10px;font-weight:800;letter-spacing:.08em;padding:2px 7px;border-radius:99px;background:var(--honey);color:var(--honey-ink);margin-left:6px;vertical-align:2px}
+@media (prefers-reduced-motion:no-preference){.act{transition:transform .08s,background .12s}.act.hit,.act:active{transform:scale(.96)}.ph-eg{animation:pulse 1s ease-in-out infinite alternate}@keyframes pulse{to{box-shadow:0 0 0 4px var(--red-soft)}}}
 @media (prefers-reduced-motion:no-preference){.tile,.tm,.btn{transition:transform .08s}.tile:active,.tm:active,.btn:active,.pm button:active{transform:scale(.95)}}
 </style>
 </head>
@@ -163,10 +246,7 @@ input[type=text],input[type=number],input[type=search]{flex:1;min-width:0;font:i
 </div></header>
 
 <main class="wrap" id="app"></main>
-<div class="savebar" id="savebar" hidden><div class="wrap">
-  <button class="btn ghost" id="cancelBtn">Back</button>
-  <button class="btn" id="saveBtn">Save match</button>
-</div></div>
+<div class="savebar" id="savebar" hidden><div class="wrap"></div></div>
 <div class="toast" id="toast" hidden></div>
 
 <script>
@@ -180,6 +260,26 @@ const CHECKS = [
   {k:"pushed", label:"Easily pushed around", hint:"Lost position when defended or bumped"},
   {k:"dc", label:"Disconnected (DC)", hint:"Robot stopped or lost connection during the match"}
 ];
+// FTC match timing: 30s Auto, 8s transition, 2:00 TeleOp (last 30s = endgame)
+const DUR = {auto:30, trans:8, tele:120};
+const ENDGAME = 30;
+const ACTS = [
+  {k:"shot", key:" ", kbd:"Space", label:"Made shot", pad:true},
+  {k:"miss", key:"x", kbd:"X", label:"Missed shot", pad:true},
+  {k:"tip",  key:"t", kbd:"T", label:"Hive tip", pad:true},
+  {k:"jam",  key:"j", kbd:"J", label:"Nectar jam"},
+  {k:"push", key:"p", kbd:"P", label:"Pushed around"},
+  {k:"dc",   key:"d", kbd:"D", label:"Disconnected"},
+  {k:"undo", key:"z", kbd:"Z", label:"Undo"}
+];
+const EV_LABEL = {shot:"Made shot", tip:"Hive tip", miss:"Missed shot", jam:"Nectar jammed", push:"Pushed around", dc:"Disconnected", rc:"Back online"};
+const QS = [
+  {k:"driving", label:"Driver skill", opts:[[1,"1"],[2,"2"],[3,"3"],[4,"4"],[5,"5"]], ends:["Shaky","Excellent"]},
+  {k:"speed", label:"Cycle speed", opts:[["slow","Slow"],["ok","Average"],["fast","Fast"]]},
+  {k:"defense", label:"Did they play defense?", opts:[["none","No"],["some","Some"],["lots","A lot"]]},
+  {k:"pick", label:"Would you pick them?", opts:[["yes","Yes"],["maybe","Maybe"],["no","No"]]}
+];
+const DEMO_TEAMS = [[99101,99214,99307,99452],[99518,99623,99101,99745],[99214,99452,99836,99518],[99307,99745,99623,99836],[99452,99101,99518,99214],[99836,99307,99745,99623]];
 const FIELD_SVG = `<svg class="fieldsvg" viewBox="0 0 6 6" aria-hidden="true">
   <rect x="0" y="1.02" width="0.46" height="0.96" style="fill:var(--red);fill-opacity:.22;stroke:var(--red);stroke-width:.035"/>
   <rect x="5.54" y="4.02" width="0.46" height="0.96" style="fill:var(--blue);fill-opacity:.22;stroke:var(--blue);stroke-width:.035"/>
@@ -265,10 +365,21 @@ function pickEvent(e){
   S.view = "matches"; S.tab = "matches";
   subscribeEntries(); loadMatches(); render();
 }
+function startDemo(){
+  const t0 = Date.now();
+  S.event = {code:"DEMO", name:"Demo Event", start:today(), end:today(), city:"Practice", demo:true};
+  ls.set("hs.event", S.event);
+  S.matches = DEMO_TEAMS.map((ts,i) => ({id:i+1, tournamentLevel:"Quals", series:0, hasBeenPlayed:false,
+    scheduledStartTime:new Date(t0 + i*7*60000).toISOString(),
+    teams: ts.map((n,j) => ({teamNumber:n, alliance:j<2?"Red":"Blue"}))}));
+  ls.set("hs.matches.DEMO", S.matches);
+  S.view = "matches"; S.tab = "matches"; subscribeEntries(); loadMatches(); render();
+}
 
 /* ---------- matches ---------- */
 async function loadMatches(){
   if (!S.event) return;
+  if (S.event.demo){ S.matches = ls.get("hs.matches.DEMO", S.matches); S.matchStatus = "Demo schedule with made-up teams. Tap Change to pick a real event."; if (S.view==="matches") render(); return; }
   S.matchStatus = "Updating schedule…"; if (S.view==="matches") renderStatus();
   try{
     const r = await getJSON(`${API}/events/${SEASON}/${S.event.code}/matches`);
@@ -293,10 +404,14 @@ async function saveEntry(entry){
   S.entries[entry.id] = entry;
   return "device";
 }
-const CSV_HEAD = ["event","level","match_id","match","team","alliance","auto_tips","teleop_tips","tiles","nectar_jammed","pushed_around","disconnected","saved_at"];
+const CSV_HEAD = ["event","level","match_id","match","team","alliance","auto_tips","teleop_tips","tiles","nectar_jammed","pushed_around","disconnected","saved_at","misses","driving","speed","defense","pick","notes","events","auto_made","teleop_made"];
+const clean = s => String(s ?? "").replace(/[,\r\n|]+/g, " ").trim();
+const encEvents = evs => (evs||[]).map(e => [e.k, e.ph, e.t, e.tile||""].join(":")).join("|");
+const decEvents = s => (s||"").split("|").filter(Boolean).map(x => { const [k,ph,t,tile] = x.split(":"); const e = {k, ph, t:+t||0}; if (/^[A-F][1-6]$/.test(tile||"")) e.tile = tile; return e; }).filter(e => EV_LABEL[e.k]);
 function toCSV(list){
   const rows = [CSV_HEAD];
-  list.sort((a,b)=>a.matchId-b.matchId || a.team-b.team).forEach(x => rows.push([x.event,x.level,x.matchId,x.match,x.team,x.alliance,x.autoTips,x.teleTips,(x.tiles||[]).join(" "),x.jammed?1:0,x.pushed?1:0,x.dc?1:0,x.savedAt||""]));
+  list.sort((a,b)=>a.matchId-b.matchId || a.team-b.team).forEach(x => rows.push([x.event,x.level,x.matchId,x.match,x.team,x.alliance,x.autoTips,x.teleTips,(x.tiles||[]).join(" "),x.jammed?1:0,x.pushed?1:0,x.dc?1:0,x.savedAt||"",
+    x.misses||0, x.driving||"", x.speed||"", x.defense||"", x.pick||"", clean(x.notes), encEvents(x.events), x.autoMade||0, x.teleMade||0]));
   return rows.map(r=>r.join(",")).join("\n");
 }
 function importCSV(text){
@@ -310,8 +425,16 @@ function importCSV(text){
     const e = {event:l[col("event")], season:SEASON, level:l[col("level")], matchId:+l[col("match_id")], match:l[col("match")],
       team:+l[col("team")], alliance:l[col("alliance")], autoTips:+l[col("auto_tips")]||0, teleTips:+l[col("teleop_tips")]||0,
       tiles:(l[col("tiles")]||"").split(" ").filter(t => /^[A-F][1-6]$/.test(t)), savedAt:l[col("saved_at")]||"",
-      jammed: l[col("nectar_jammed")]==="1", pushed: l[col("pushed_around")]==="1", dc: l[col("disconnected")]==="1"};
+      jammed: l[col("nectar_jammed")]==="1", pushed: l[col("pushed_around")]==="1", dc: l[col("disconnected")]==="1",
+      misses:+l[col("misses")]||0, driving:+l[col("driving")]||0, speed:l[col("speed")]||"", defense:l[col("defense")]||"", pick:l[col("pick")]||"", notes:l[col("notes")]||"", autoMade:+l[col("auto_made")]||0, teleMade:+l[col("teleop_made")]||0};
     if (!e.event || !e.team || !e.matchId) continue;
+    const evs = decEvents(l[col("events")]);
+    if (evs.length){
+      e.events = evs;
+      const a = evs.filter(x=>x.k==="tip"&&x.ph==="auto").length, t = evs.filter(x=>x.k==="tip"&&x.ph==="tele").length;
+      const sa = evs.filter(x=>x.k==="shot"&&x.ph==="auto").length, st = evs.filter(x=>x.k==="shot"&&x.ph==="tele").length;
+      if (e.autoTips > a || e.teleTips > t || e.autoMade > sa || e.teleMade > st) e.base = {auto:Math.max(0,e.autoTips-a), tele:Math.max(0,e.teleTips-t), madeAuto:Math.max(0,e.autoMade-sa), madeTele:Math.max(0,e.teleMade-st)};
+    }
     e.id = `${e.event}_${e.level}-${e.matchId}_${e.team}`;
     const old = local[e.id];
     if (!old){ local[e.id] = e; added++; }
@@ -322,17 +445,98 @@ function importCSV(text){
 }
 
 /* ---------- scoring ---------- */
-function openScore(m, t){
+function openScore(m, t, mi){
   const id = entryId(S.event.code, m, t.teamNumber);
   const prev = S.entries[id];
   S.cur = {
-    id, event:S.event.code, season:SEASON, level:m.tournamentLevel, matchId:m.id, match:matchLabel(m),
-    team:t.teamNumber, alliance:t.alliance,
-    autoTips: prev?.autoTips ?? 0, teleTips: prev?.teleTips ?? 0,
-    tiles: [...(prev?.tiles ?? [])], edited: !!prev,
-    jammed: !!prev?.jammed, pushed: !!prev?.pushed, dc: !!prev?.dc
+    id, event:S.event.code, season:SEASON, level:m.tournamentLevel, matchId:m.id, match:matchLabel(m), mi,
+    team:t.teamNumber, alliance:t.alliance, edited: !!prev,
+    events: (prev?.events || []).map(e => ({...e})),
+    // entries scored before live scoring (or merged from counts) keep their totals as a base
+    base: prev ? (prev.base || (Array.isArray(prev.events) ? null : {auto:prev.autoTips||0, tele:prev.teleTips||0, madeAuto:prev.autoMade||0, madeTele:prev.teleMade||0})) : null,
+    tiles: [...(prev?.tiles || [])],
+    jammed: !!prev?.jammed, pushed: !!prev?.pushed, dc: !!prev?.dc,
+    driving: prev?.driving || 0, speed: prev?.speed || "", defense: prev?.defense || "", pick: prev?.pick || "", notes: prev?.notes || "",
+    stage: prev ? "survey" : "live", phase: "pre", dcOn: false, speedX: 1
   };
   S.view = "score"; render(); window.scrollTo(0,0);
+}
+
+/* ---------- live match clock ---------- */
+let clockTimer = null;
+const fmtClock = (s, up) => { s = up ? Math.floor(s) : Math.ceil(s); return Math.floor(s/60) + ":" + String(s%60).padStart(2,"0"); };
+function elapsed(){ const c = S.cur; return (performance.now() - c.phaseStart) / 1000 * c.speedX; }
+function matchTime(){ const c = S.cur, e = elapsed(); return c.phase==="auto" ? e : c.phase==="trans" ? DUR.auto + e : c.phase==="tele" ? DUR.auto + DUR.trans + e : 0; }
+function startMatch(){
+  const c = S.cur; if (!c || c.phase !== "pre") return;
+  setPhase("auto"); clearInterval(clockTimer); clockTimer = setInterval(tick, 100);
+}
+function setPhase(p){ const c = S.cur; c.phase = p; c.phaseStart = performance.now(); c.eg = false; render(); }
+function stopClock(){ clearInterval(clockTimer); clockTimer = null; }
+function tick(){
+  const c = S.cur;
+  if (!c || S.view !== "score" || c.stage !== "live" || !DUR[c.phase]){ stopClock(); return; }
+  const e = elapsed(), rem = Math.max(0, DUR[c.phase] - e);
+  if (rem <= 0){ if (c.phase === "auto") setPhase("trans"); else if (c.phase === "trans") setPhase("tele"); else endMatch(); return; }
+  if (c.phase === "tele" && rem <= ENDGAME && !c.eg){ c.eg = true; render(); return; }
+  const t = document.getElementById("clockT"), b = document.getElementById("clockBar");
+  if (t) t.textContent = fmtClock(rem);
+  if (b) b.style.width = (100 * rem / DUR[c.phase]).toFixed(1) + "%";
+}
+function endMatch(){
+  stopClock();
+  const c = S.cur, T = tally(c);
+  c.phase = "post"; c.stage = "survey";
+  if (T.jam) c.jammed = true; if (T.push) c.pushed = true; if (T.dc) c.dc = true;
+  render(); window.scrollTo(0,0); toast("Match over. Quick survey, then save.");
+}
+function tally(c){
+  const ev = c.events || [], b = c.base || {auto:0, tele:0, tiles:[]};
+  const n = (k, ph) => ev.filter(e => e.k === k && (!ph || e.ph === ph)).length;
+  return {auto:b.auto + n("tip","auto"), tele:b.tele + n("tip","tele"),
+    madeAuto:(b.madeAuto||0) + n("shot","auto"), madeTele:(b.madeTele||0) + n("shot","tele"),
+    miss:n("miss"), jam:n("jam"), push:n("push"), dc:n("dc")};
+}
+function act(k){
+  const c = S.cur; if (!c || c.stage !== "live") return;
+  if (c.phase === "pre"){ toast("Press GO (Enter) when the match starts"); return; }
+  if (k === "undo"){
+    const ev = c.events.pop();
+    if (!ev){ toast("Nothing to undo"); return; }
+    if (ev.k === "dc") c.dcOn = false; if (ev.k === "rc") c.dcOn = true;
+    render(); flash("undo"); toast("Undid " + EV_LABEL[ev.k].toLowerCase()); return;
+  }
+  let kind = k;
+  if (k === "dc"){ kind = c.dcOn ? "rc" : "dc"; c.dcOn = !c.dcOn; }
+  const ev = {k:kind, ph: c.phase === "tele" ? "tele" : "auto", t: +matchTime().toFixed(1)};
+  c.events.push(ev); render(); flash(k);
+}
+function flash(k){
+  const b = document.querySelector(`[data-act="${k}"]`); if (!b) return;
+  if (k === "shot" || k === "tip" || k === "miss"){
+    const good = k !== "miss";
+    b.classList.add(good ? "pop" : "shake");
+    const f = document.createElement("span"); f.className = "float"; f.textContent = good ? "+1" : "✕"; b.appendChild(f);
+    try{ navigator.vibrate?.(good ? 18 : [10,40,10]); }catch(_){}
+    return;
+  }
+  b.classList.add("hit"); setTimeout(() => b.classList.remove("hit"), 160);
+}
+function armed(key, msg){
+  if (S._arm === key && Date.now() - S._armT < 3000){ S._arm = null; return true; }
+  S._arm = key; S._armT = Date.now(); toast(msg); return false;
+}
+function leaveScore(){ stopClock(); S.view = "matches"; S.cur = null; render(); scrollToNext(); }
+async function saveCur(){
+  const c = S.cur, T = tally(c);
+  const entry = {id:c.id, event:c.event, season:c.season, level:c.level, matchId:c.matchId, match:c.match, team:c.team, alliance:c.alliance,
+    autoTips:T.auto, teleTips:T.tele, autoMade:T.madeAuto, teleMade:T.madeTele, misses:T.miss, tiles:[...c.tiles].sort(), events:c.events, jammed:c.jammed, pushed:c.pushed, dc:c.dc,
+    driving:c.driving, speed:c.speed, defense:c.defense, pick:c.pick, notes:c.notes.trim(), savedAt:new Date().toISOString()};
+  if (c.base) entry.base = c.base;
+  await saveEntry(entry);
+  if (S.event.demo && S.matches[c.mi]){ S.matches[c.mi].hasBeenPlayed = true; ls.set("hs.matches.DEMO", S.matches); }
+  S.tab = "matches"; leaveScore();
+  toast(`Saved ${c.team} in ${c.match}`);
 }
 
 /* ---------- render ---------- */
@@ -340,10 +544,24 @@ function render(){
   const evtBox = document.getElementById("evtBox");
   evtBox.hidden = !S.event || S.view === "event";
   if (S.event){ document.getElementById("evtName").textContent = S.event.name; document.getElementById("evtCode").textContent = S.event.code; }
-  document.getElementById("savebar").hidden = S.view !== "score";
+  if (S.event){ document.getElementById("evtName").innerHTML = esc(S.event.name) + (S.event.demo ? '<span class="demo-pill">DEMO</span>' : ""); }
+  if (S.view !== "score") stopClock();
+  renderBar();
   if (S.view === "event") app.innerHTML = viewEvent();
   else if (S.view === "matches") app.innerHTML = S.tab === "teams" ? viewTabs() + viewTeams() : viewTabs() + viewMatches();
-  else app.innerHTML = viewScore();
+  else app.innerHTML = S.cur.stage === "live" ? viewLive() : viewSurvey();
+}
+function renderBar(){
+  const bar = document.getElementById("savebar");
+  bar.hidden = S.view !== "score" || !S.cur; if (bar.hidden) return;
+  const c = S.cur; let h;
+  if (c.stage === "live") h = c.phase === "pre"
+    ? `<button class="btn ghost" data-bar="back">Back</button><button class="btn go" data-bar="go">GO ▶ <kbd>Enter</kbd></button>`
+    : `<button class="btn ghost" data-bar="quit">Quit</button><button class="btn" data-bar="end">End match</button>`;
+  else h = c.edited
+    ? `<button class="btn ghost" data-bar="back">Back</button><button class="btn" data-bar="save">Save changes</button>`
+    : `<button class="btn ghost" data-bar="discard">Discard</button><button class="btn" data-bar="save">Save match</button>`;
+  bar.querySelector(".wrap").innerHTML = h;
 }
 function renderStatus(){ const el = document.getElementById("mstatus"); if (el) el.textContent = S.matchStatus; }
 
@@ -359,6 +577,7 @@ function viewEvent(){
   <form class="field" id="teamForm"><input id="teamIn" type="number" inputmode="numeric" placeholder="Your team number" value="${esc(S.myTeam)}"><button class="btn">Find</button></form>
   <form class="field" id="searchForm"><input id="searchIn" type="search" placeholder="Or search event name or code" value="${esc(S.searchQ||"")}"><button class="btn ghost">Search</button></form>
   ${results}${todays}
+  <div class="note" style="display:flex;align-items:center;gap:12px"><span style="flex:1">No competition right now? Try a full live match with made-up teams.</span><button class="btn" id="demoBtn">Try the demo</button></div>
   <p class="note">Schedules come from FTCScout, which mirrors the official FIRST results. New matches show up within a minute or two of the scoring system posting them.</p>`;
 }
 
@@ -392,33 +611,92 @@ function viewMatches(){
   <p class="note">Tap a team number to scout that robot. ✓ means it's saved on this phone. To combine scouts' data, use Copy data and Import on the Teams tab.</p>`;
 }
 
-function viewScore(){
-  const c = S.cur, a = c.alliance === "Red" ? "r" : "b";
-  const tiles = [];
+function scoreHead(c, sub){
+  return `<div class="scorehead"><div class="tag ${c.alliance==="Red"?"r":"b"}">${c.team}</div><div><h2>${esc(c.match)} · ${c.alliance} alliance</h2><p class="sub">${sub}</p></div></div>`;
+}
+function fieldGrid(c){
+  let tiles = "";
   for (let r=0;r<6;r++) for (let col=0;col<6;col++){
-    const k = tileAt(r,col); const on = c.tiles.includes(k);
-    tiles.push(`<button class="tile" data-tile="${k}" aria-pressed="${on}" aria-label="Tile ${k}"><span class="lbl">${k}</span></button>`);
+    const k = tileAt(r,col), on = c.tiles.includes(k);
+    tiles += `<button class="tile" data-tile="${k}" aria-pressed="${on}" aria-label="Can shoot from ${k}"><span class="lbl">${k}</span></button>`;
   }
-  return `
-  <div class="scorehead"><div class="tag ${a}">${c.team}</div><div><h2>${esc(c.match)} · ${c.alliance} alliance</h2><p class="sub">${c.edited ? "Editing a saved entry" : "New entry"}</p></div></div>
-  <div><div class="lab" style="margin-bottom:8px">Hive tips</div>
-  <div class="counters">
-    <div class="counter"><div class="lab">Auto</div><div class="n" id="n-autoTips">${c.autoTips}</div><div class="pm"><button class="minus" data-dec="autoTips" aria-label="Remove auto tip">−</button><button class="plus" data-inc="autoTips" aria-label="Add auto tip">+</button></div></div>
-    <div class="counter"><div class="lab">TeleOp</div><div class="n" id="n-teleTips">${c.teleTips}</div><div class="pm"><button class="minus" data-dec="teleTips" aria-label="Remove TeleOp tip">−</button><button class="plus" data-inc="teleTips" aria-label="Add TeleOp tip">+</button></div></div>
-  </div></div>
-  <div class="fieldwrap">
-    <div style="display:flex;justify-content:space-between;align-items:baseline"><div class="lab">Shot from (tap every tile)</div><button class="linkbtn" id="clearTiles">Clear</button></div>
-    <div class="fieldframe">
+  return `<div class="fieldframe">
       <span></span><div class="side">Far wall</div><span></span>
       <div class="side v red">Red drivers</div>
-      <div class="grid">${tiles.join("")}${FIELD_SVG}</div>
+      <div class="grid">${tiles}${FIELD_SVG}</div>
       <div class="side v right blue">Blue drivers</div>
       <span></span><div class="side">Audience</div><span></span>
-    </div>
+    </div>`;
+}
+function viewLive(){
+  const c = S.cur, T = tally(c), ph = c.phase;
+  const rem = DUR[ph] ? Math.max(0, DUR[ph] - elapsed()) : DUR.auto;
+  const eg = ph === "tele" && rem <= ENDGAME;
+  const label = {pre:"Ready", auto:"Autonomous", trans:"Transition", tele: eg ? "Endgame" : "TeleOp"}[ph];
+  const pct = DUR[ph] ? 100 * rem / DUR[ph] : 100;
+  const sub = {
+    pre: `Press <kbd>Enter</kbd> or GO the moment the field starts the match.`,
+    auto: "Everything you log now counts as Auto.",
+    trans: `Drivers picking up controllers. <button class="linkbtn" data-skip>Start TeleOp now</button> <kbd>Enter</kbd>`,
+    tele: eg ? "Endgame. Last 30 seconds." : "Everything you log now counts as TeleOp."
+  }[ph];
+  const made = T.madeAuto + T.madeTele, shots = made + T.miss;
+  const off = ph === "pre" ? 'aria-disabled="true"' : "";
+  const pad = `<div class="shotpad">
+    <button class="shot made" data-act="shot" ${off} aria-label="Made shot (Space)">
+      <span class="shot-top"><span class="shot-name">Made shot</span><kbd>Space</kbd></span>
+      <span class="shot-n">${made}</span>
+      <span class="shot-sub">Auto ${T.madeAuto} · TeleOp ${T.madeTele}</span>
+    </button>
+    <button class="shot miss" data-act="miss" ${off} aria-label="Missed shot (X)">
+      <span class="shot-top"><span class="shot-name">Miss</span><kbd>X</kbd></span>
+      <span class="shot-n">${T.miss}</span>
+      <span class="shot-sub">${shots ? Math.round(100*made/shots) + "% made" : "no shots yet"}</span>
+    </button>
+    <button class="shot hive" data-act="tip" ${off} aria-label="Hive tip (T)">
+      <span class="shot-top"><span class="shot-name">Hive tip</span><kbd>T</kbd></span>
+      <span class="hive-row"><span class="shot-n">${T.auto + T.tele}</span><span class="shot-sub">Auto ${T.auto} · TeleOp ${T.tele}</span></span>
+    </button>
+  </div>`;
+  const actBtn = a => {
+    const lab = a.k === "dc" && c.dcOn ? "Back online" : a.label;
+    const hint = a.k === "dc" ? `<small>${c.dcOn ? "Robot is dead. Press again when it moves" : "Press again when it's back"}</small>` : "";
+    return `<button class="act ${a.main?"main":""} ${a.k==="dc"&&c.dcOn?"on":""}" data-act="${a.k}" ${ph==="pre"?'aria-disabled="true"':""}><span>${lab}${hint}</span><kbd>${a.kbd}</kbd></button>`;
+  };
+  const log = c.events.slice(-6).reverse().map(e => `<li><span class="lt">${fmtClock(e.t, true)}</span><span class="lp ${e.ph}">${e.ph==="auto"?"AUTO":"TELE"}</span><span>${EV_LABEL[e.k]}${e.tile?` <span style="color:var(--muted)">from ${e.tile}</span>`:""}</span></li>`).join("");
+  return `
+  ${scoreHead(c, "Live scoring")}
+  <div class="clock ph-${eg?"eg":ph}">
+    <div class="clk-top"><span class="phase">${label}</span><span class="time" id="clockT">${fmtClock(rem)}</span></div>
+    <div class="bar"><i id="clockBar" style="width:${pct.toFixed(1)}%"></i></div>
+    <div class="clk-sub">${sub}</div>
+  </div>
+  ${pad}
+  <div class="acts">${ACTS.filter(a => !a.pad).map(actBtn).join("")}</div>
+  ${log ? `<div><div class="lab" style="margin-bottom:8px">What happened</div><ul class="log">${log}</ul></div>` : ""}
+  <div class="keys"><span><kbd>Enter</kbd>GO</span><span><kbd>Space</kbd>made shot</span><span><kbd>X</kbd>miss</span><span><kbd>T</kbd>hive tip</span><span><kbd>J</kbd>jam</span><span><kbd>P</kbd>pushed</span><span><kbd>D</kbd>DC</span><span><kbd>Z</kbd>undo</span></div>`;
+}
+function viewSurvey(){
+  const c = S.cur, T = tally(c), shots = T.madeAuto + T.madeTele + T.miss;
+  const acc = shots ? Math.round(100 * (T.madeAuto + T.madeTele) / shots) + "%" : "–";
+  const cnt = {jammed:T.jam, pushed:T.push, dc:T.dc};
+  const q = x => `<div class="q"><div class="lab">${x.label}</div><div class="seg">${x.opts.map(([v,l]) => `<button data-q="${x.k}" data-v="${v}" aria-pressed="${String(c[x.k])===String(v)}">${l}</button>`).join("")}</div>${x.ends?`<div class="ends"><span>${x.ends[0]}</span><span>${x.ends[1]}</span></div>`:""}</div>`;
+  const log = c.events.map((e,i) => `<li><span class="lt">${fmtClock(e.t, true)}</span><span class="lp ${e.ph}">${e.ph==="auto"?"AUTO":"TELE"}</span><span>${EV_LABEL[e.k]}${e.tile?` <span style="color:var(--muted)">from ${e.tile}</span>`:""}</span><button class="x" data-del="${i}" aria-label="Remove this event">✕</button></li>`).join("");
+  return `
+  ${scoreHead(c, c.edited ? "Editing a saved entry" : "After-match survey")}
+  <div class="sumcard" style="grid-template-columns:1fr">
+    <div class="stats" style="justify-content:space-between"><div class="stat"><b>${T.madeAuto + T.madeTele}</b><span>made shots</span></div><div class="stat"><b>${T.miss}</b><span>missed</span></div><div class="stat"><b>${T.auto}</b><span>auto tips</span></div><div class="stat"><b>${T.tele}</b><span>teleop tips</span></div><div class="stat"><b>${acc}</b><span>accuracy</span></div></div>
+  </div>
+  <div class="fieldwrap">
+    <div style="display:flex;justify-content:space-between;align-items:baseline"><div class="lab">Where can they shoot from? Tap every tile</div><button class="linkbtn" id="clearTiles">Clear</button></div>
+    ${fieldGrid(c)}
     <div class="legend"><span><i style="background:var(--honey);border-radius:50%"></i>Flower</span><span><i style="background:var(--red-soft);border:1.5px solid var(--red)"></i>Hive cells</span><span><i style="border:1.5px solid var(--red);background:transparent"></i>Loading zone</span><span><i style="background:var(--red);height:4px"></i>Garden</span></div>
   </div>
   <div><div class="lab" style="margin-bottom:8px">Problems this match</div>
-  <div class="checks">${CHECKS.map(x => `<button class="check" data-check="${x.k}" aria-pressed="${!!c[x.k]}"><span class="box">✓</span><span>${x.label}<small>${x.hint}</small></span></button>`).join("")}</div></div>`;
+  <div class="checks">${CHECKS.map(x => `<button class="check" data-check="${x.k}" aria-pressed="${!!c[x.k]}"><span class="box">✓</span><span>${x.label}<small>${cnt[x.k] ? `Logged ${cnt[x.k]}× during the match` : x.hint}</small></span></button>`).join("")}</div></div>
+  ${QS.map(q).join("")}
+  <div class="q"><div class="lab">Notes</div><textarea class="notes" id="notesIn" placeholder="Anything the numbers miss: strategy, auto path, what broke…">${esc(c.notes)}</textarea></div>
+  ${c.events.length ? `<details class="mlog"><summary>Match log (${c.events.length} events). Remove any mistakes</summary><ul class="log">${log}</ul></details>` : ""}`;
 }
 
 function viewTeams(){
@@ -431,7 +709,12 @@ function viewTeams(){
     const n = es.length, sum = k => es.reduce((s,e)=>s+(e[k]||0),0);
     const heat = {}; es.forEach(e => (e.tiles||[]).forEach(t => heat[t]=(heat[t]||0)+1));
     const cnt = k => es.filter(e => e[k]).length;
-    return {team, n, auto:sum("autoTips")/n, tele:sum("teleTips")/n, heat, jammed:cnt("jammed"), pushed:cnt("pushed"), dc:cnt("dc")};
+    const made = sum("autoMade") + sum("teleMade"), shots = made + sum("misses");
+    const rated = es.filter(e => e.driving > 0);
+    const picks = {yes:0, maybe:0, no:0}; es.forEach(e => { if (picks[e.pick] != null) picks[e.pick]++; });
+    const note = es.filter(e => e.notes).sort((a,b) => (b.savedAt||"").localeCompare(a.savedAt||""))[0]?.notes || "";
+    return {team, n, auto:sum("autoTips")/n, tele:sum("teleTips")/n, heat, jammed:cnt("jammed"), pushed:cnt("pushed"), dc:cnt("dc"),
+      made: made/n, acc: shots ? Math.round(100*made/shots) + "%" : "–", drive: rated.length ? (rated.reduce((s,e)=>s+e.driving,0)/rated.length).toFixed(1) : "–", picks, note};
   }).sort((a,b) => (b.auto+b.tele)-(a.auto+a.tele));
   const n = Object.values(S.entries).filter(e => e.event === S.event.code).length;
   const tools = `<div class="toolbar"><span class="status" style="flex:1">${teams.length} teams · ${n} entries on this phone</span><button class="btn ghost" id="copyCsv">Copy data</button><button class="btn ghost" id="importToggle">Import</button></div>
@@ -447,8 +730,9 @@ function viewTeams(){
     const max = Math.max(1, ...Object.values(t.heat));
     let cells = ""; for (let r=0;r<6;r++) for (let c=0;c<6;c++){ const k = tileAt(r,c), v = t.heat[k]||0; cells += `<i title="${k}: ${v}">${v?`<b style="opacity:${(.25+.75*v/max).toFixed(2)}"></b>`:""}</i>`; }
     return `<div class="team"><div><div class="num">${esc(t.team)}</div>
-      <div class="stats"><div class="stat"><b>${t.auto.toFixed(1)}</b><span>auto tips</span></div><div class="stat"><b>${t.tele.toFixed(1)}</b><span>teleop tips</span></div><div class="stat"><b>${t.n}</b><span>matches</span></div></div>
-      <div class="flags"><span class="flag ${t.jammed?"bad":""}">Jammed ${t.jammed}/${t.n}</span><span class="flag ${t.pushed?"bad":""}">Pushed ${t.pushed}/${t.n}</span><span class="flag ${t.dc?"bad":""}">DC ${t.dc}/${t.n}</span></div></div>
+      <div class="stats"><div class="stat"><b>${t.auto.toFixed(1)}</b><span>auto tips</span></div><div class="stat"><b>${t.tele.toFixed(1)}</b><span>teleop tips</span></div><div class="stat"><b>${t.made.toFixed(1)}</b><span>made shots</span></div><div class="stat"><b>${t.acc}</b><span>accuracy</span></div><div class="stat"><b>${t.drive}</b><span>driver /5</span></div></div>
+      <div class="flags"><span class="flag">${t.n} match${t.n>1?"es":""}</span><span class="flag ${t.jammed?"bad":""}">Jammed ${t.jammed}/${t.n}</span><span class="flag ${t.pushed?"bad":""}">Pushed ${t.pushed}/${t.n}</span><span class="flag ${t.dc?"bad":""}">DC ${t.dc}/${t.n}</span>${t.picks.yes+t.picks.maybe+t.picks.no ? `<span class="flag" style="background:var(--honey-soft);color:var(--fg)">Pick: ${t.picks.yes} yes · ${t.picks.maybe} maybe · ${t.picks.no} no</span>` : ""}</div>
+      ${t.note ? `<div class="tnote">“${esc(t.note)}”</div>` : ""}</div>
       <div class="mini" aria-label="Shooting tiles heat map">${cells}</div></div>`;
   };
   return tools + `<div class="status">Ranked by average hive tips per match</div>` + teams.map(card).join("");
@@ -461,6 +745,7 @@ app.addEventListener("submit", e => {
   if (e.target.id === "searchForm"){ const v = document.getElementById("searchIn").value.trim(); S.searchQ = v; if (v) searchEvents(v); }
 });
 app.addEventListener("input", e => {
+  if (e.target.id === "notesIn"){ S.cur.notes = e.target.value; return; }
   if (e.target.id === "filterIn"){ S.filter = e.target.value; const pos = e.target.selectionStart; render(); const el = document.getElementById("filterIn"); el.focus(); try{ el.setSelectionRange(pos,pos);}catch(_){} }
 });
 app.addEventListener("click", async e => {
@@ -469,12 +754,16 @@ app.addEventListener("click", async e => {
   if (b.dataset.tab){ S.tab = b.dataset.tab; render(); return; }
   if (b.id === "refreshBtn"){ loadMatches(); return; }
   if (b.id === "mineBtn"){ S.onlyMine = !S.onlyMine; ls.set("hs.onlyMine", S.onlyMine); render(); return; }
-  if (b.dataset.m != null){ const m = S.matches[+b.dataset.m]; const t = m.teams.find(x => String(x.teamNumber) === b.dataset.t); openScore(m, t); return; }
-  if (b.dataset.inc){ S.cur[b.dataset.inc]++; document.getElementById("n-"+b.dataset.inc).textContent = S.cur[b.dataset.inc]; return; }
-  if (b.dataset.dec){ S.cur[b.dataset.dec] = Math.max(0, S.cur[b.dataset.dec]-1); document.getElementById("n-"+b.dataset.dec).textContent = S.cur[b.dataset.dec]; return; }
-  if (b.dataset.tile){ const k = b.dataset.tile, i = S.cur.tiles.indexOf(k); if (i<0) S.cur.tiles.push(k); else S.cur.tiles.splice(i,1); b.setAttribute("aria-pressed", i<0); return; }
-  if (b.dataset.check){ const k = b.dataset.check; S.cur[k] = !S.cur[k]; b.setAttribute("aria-pressed", S.cur[k]); return; }
+  if (b.id === "demoBtn"){ startDemo(); return; }
+  if (b.dataset.m != null){ const mi = +b.dataset.m, m = S.matches[mi]; const t = m.teams.find(x => String(x.teamNumber) === b.dataset.t); openScore(m, t, mi); return; }
+  if (b.dataset.act){ act(b.dataset.act); return; }
+  if (b.dataset.tile){ const k = b.dataset.tile, i = S.cur.tiles.indexOf(k); if (i < 0) S.cur.tiles.push(k); else S.cur.tiles.splice(i,1); b.setAttribute("aria-pressed", i < 0); return; }
   if (b.id === "clearTiles"){ S.cur.tiles = []; document.querySelectorAll(".tile").forEach(t => t.setAttribute("aria-pressed","false")); return; }
+  if (b.dataset.skip != null){ if (S.cur.phase === "trans") setPhase("tele"); return; }
+  if (b.dataset.q){ const k = b.dataset.q, v = k === "driving" ? +b.dataset.v : b.dataset.v; S.cur[k] = String(S.cur[k]) === String(v) ? (k==="driving"?0:"") : v;
+    b.parentElement.querySelectorAll("button").forEach(x => x.setAttribute("aria-pressed", String(S.cur[k]) === x.dataset.v)); return; }
+  if (b.dataset.del != null){ S.cur.events.splice(+b.dataset.del, 1); render(); document.querySelector("details.mlog")?.setAttribute("open",""); return; }
+  if (b.dataset.check){ const k = b.dataset.check; S.cur[k] = !S.cur[k]; b.setAttribute("aria-pressed", S.cur[k]); return; }
   if (b.id === "copyCsv"){
     const csv = toCSV(Object.values(S.entries).filter(x=>x.event===S.event.code));
     try{ await navigator.clipboard.writeText(csv); toast("Copied. Send it to your lead scout."); }
@@ -488,21 +777,36 @@ app.addEventListener("click", async e => {
     render(); return;
   }
 });
-document.getElementById("cancelBtn").onclick = () => { S.view = "matches"; render(); scrollToNext(); };
-document.getElementById("saveBtn").onclick = async () => {
-  const btn = document.getElementById("saveBtn"); btn.disabled = true; btn.textContent = "Saving…";
+document.getElementById("savebar").addEventListener("click", e => {
+  const b = e.target.closest("button[data-bar]"); if (!b || !S.cur) return;
+  const a = b.dataset.bar;
+  if (a === "back") leaveScore();
+  else if (a === "go") startMatch();
+  else if (a === "end") endMatch();
+  else if (a === "quit"){ if (armed("quit", "Press Quit again to throw this match away")) leaveScore(); }
+  else if (a === "discard"){ if (armed("discard", "Press Discard again to throw this match away")) leaveScore(); }
+  else if (a === "save") saveCur();
+});
+// Keybinds for live scoring. Ignored while typing in a text box.
+document.addEventListener("keydown", e => {
   const c = S.cur;
-  const entry = {id:c.id, event:c.event, season:c.season, level:c.level, matchId:c.matchId, match:c.match, team:c.team, alliance:c.alliance, autoTips:c.autoTips, teleTips:c.teleTips, tiles:[...c.tiles].sort(), jammed:c.jammed, pushed:c.pushed, dc:c.dc, savedAt:new Date().toISOString()};
-  await saveEntry(entry);
-  btn.disabled = false; btn.textContent = "Save match";
-  S.view = "matches"; S.tab = "matches"; render(); scrollToNext();
-  toast(`Saved ${c.team} in ${c.match}`);
-};
+  if (S.view !== "score" || !c || c.stage !== "live") return;
+  if (e.target.closest?.("input,textarea,select") || e.metaKey || e.ctrlKey || e.altKey) return;
+  const k = e.key;
+  if (k === "Enter"){ e.preventDefault(); if (c.phase === "pre") startMatch(); else if (c.phase === "trans") setPhase("tele"); return; }
+  if (k === "Backspace"){ e.preventDefault(); if (!e.repeat) act("undo"); return; }
+  const a = ACTS.find(x => x.key === k.toLowerCase());
+  if (a){ e.preventDefault(); if (!e.repeat) act(a.k); }
+});
 document.getElementById("changeEvt").onclick = () => { S.view = "event"; S.eventResults = null; S.eventMsg = ""; render(); loadTodaysEvents(); if (S.myTeam) findEventsForTeam(S.myTeam); };
 function scrollToNext(){ requestAnimationFrame(() => document.getElementById("nextMatch")?.scrollIntoView({block:"center"})); }
 
 /* ---------- boot ---------- */
-if (S.event){ S.view = "matches"; S.matches = ls.get("hs.matches."+S.event.code, []); subscribeEntries(); loadMatches().then(scrollToNext); }
+// ?demo jumps straight into a demo match, ready for GO
+if (new URLSearchParams(location.search).has("demo")){
+  startDemo(); const m = S.matches[0]; openScore(m, m.teams[0], 0);
+}
+else if (S.event){ S.view = "matches"; S.matches = ls.get("hs.matches."+S.event.code, []); subscribeEntries(); loadMatches().then(scrollToNext); }
 else { loadTodaysEvents(); if (S.myTeam) findEventsForTeam(S.myTeam); }
 render();
 </script>
